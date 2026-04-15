@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resend — Support Toolkit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root, [data-theme="dark"] {
+      --bg:#0c0e12; --surface:#12151a; --panel:#171b22; --panel2:#1c2028;
+      --border:#232830; --border-hi:#2e3540; --muted:#3a4254;
+      --text-dim:#66738a; --text:#bdc8db; --text-hi:#e4ecf7;
+      --accent:#5c8aff; --accent-lo:rgba(92,138,255,.11); --accent-mid:rgba(92,138,255,.22);
+      --green:#3ecf8e; --green-lo:rgba(62,207,142,.1);
+      --red:#f06779; --red-lo:rgba(240,103,121,.1);
+      --yellow:#f5c518; --yellow-lo:rgba(245,197,24,.1);
+      --orange:#f5904a; --purple:#a78bfa; --cyan:#38bdf8;
+      --preview-bg:#fff; --json-bg:#0c0e12;
+    }
+    [data-theme="light"] {
+      --bg:#f0f2f5; --surface:#ffffff; --panel:#f7f8fa; --panel2:#eef0f4;
+      --border:#dce0e8; --border-hi:#c8cdd6; --muted:#a0a8b8;
+      --text-dim:#6b7589; --text:#3a4050; --text-hi:#1a1e2a;
+      --accent:#4a72e0; --accent-lo:rgba(74,114,224,.1); --accent-mid:rgba(74,114,224,.2);
+      --green:#1a9960; --green-lo:rgba(26,153,96,.08);
+      --red:#d94455; --red-lo:rgba(217,68,85,.08);
+      --yellow:#b58d00; --yellow-lo:rgba(181,141,0,.08);
+      --orange:#c96a20; --purple:#7c5cbf; --cyan:#1a8fc4;
+      --preview-bg:#fff; --json-bg:#f0f2f5;
+    }
+
+    html, body { height:100%; background:var(--bg); color:var(--text); font-family:'IBM Plex Sans',sans-serif; font-size:15px; line-height:1.6; }
+
+    .shell { display:grid; grid-template-rows:52px 1fr; height:100vh; }
+    header {
+      display:flex; align-items:center; gap:12px; padding:0 20px;
+      border-bottom:1px solid var(--border); background:var(--surface); flex-shrink:0;
+    }
+    .logo-mark { width:26px; height:26px; background:var(--accent); border-radius:5px; display:grid; place-items:center; font-size:12px; font-weight:700; color:#fff; }
+    .logo-text { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:500; color:var(--text-hi); letter-spacing:.05em; }
+    .logo-sep { color:var(--muted); font-family:'IBM Plex Mono',monospace; }
+    .hdr-badge { font-family:'IBM Plex Mono',monospace; font-size:10px; padding:2px 8px; border-radius:20px; background:var(--accent-lo); color:var(--accent); border:1px solid rgba(92,138,255,.2); letter-spacing:.06em; }
+    .hdr-spacer { flex:1; }
+
+    .theme-toggle { display:flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--border); border-radius:20px; padding:4px 5px; cursor:pointer; transition:all .2s; }
+    .theme-toggle:hover { border-color:var(--accent); }
+    .theme-toggle-track { width:38px; height:20px; border-radius:10px; background:var(--muted); position:relative; transition:background .25s; }
+    [data-theme="light"] .theme-toggle-track { background:var(--accent); }
+    .theme-toggle-thumb { width:16px; height:16px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:transform .25s; display:grid; place-items:center; font-size:10px; line-height:1; }
+    [data-theme="light"] .theme-toggle-thumb { transform:translateX(18px); }
+    .theme-toggle-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:.06em; text-transform:uppercase; user-select:none; }
+
+    .workspace { display:flex; overflow:hidden; height:100%; }
+
+    .nav-sidebar {
+      width:200px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border);
+      display:flex; flex-direction:column; padding:16px 10px; gap:4px;
+    }
+    .nav-section-label { font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.14em; text-transform:uppercase; padding:8px 10px 4px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:6px; font-size:14px; font-weight:500; color:var(--text-dim); cursor:pointer; border:none; background:none; width:100%; text-align:left; transition:all .15s; position:relative; }
+    .nav-item:hover { color:var(--text); background:var(--panel); }
+    .nav-item.active { color:var(--accent); background:var(--accent-lo); }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; border-radius:2px; background:var(--accent); }
+    .nav-icon { font-size:15px; flex-shrink:0; }
+    .nav-divider { height:1px; background:var(--border); margin:8px 4px; }
+
+    .tool-pane { flex:1; min-width:300px; overflow-y:auto; overflow-x:hidden; padding:26px 28px; border-right:1px solid var(--border); display:flex; flex-direction:column; gap:20px; }
+    .pane-title { font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:var(--text-dim); letter-spacing:.12em; text-transform:uppercase; padding-bottom:14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+    .pane-title-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); }
+
+    .section { display:flex; flex-direction:column; gap:6px; }
+    label { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; }
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    input, select { width:100%; background:var(--panel); border:1px solid var(--border); border-radius:6px; color:var(--text-hi); font-family:'IBM Plex Mono',monospace; font-size:13px; padding:10px 14px; outline:none; transition:border-color .15s, box-shadow .15s; appearance:none; }
+    input::placeholder { color:var(--muted); }
+    input:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-lo); }
+
+    .api-wrap { position:relative; }
+    .api-wrap input { padding-right:42px; }
+    .eye-btn { position:absolute; right:11px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-dim); display:grid; place-items:center; padding:4px; }
+    .eye-btn:hover { color:var(--text); }
+
+    .editor-label-row { display:flex; align-items:center; justify-content:space-between; }
+    .tab-row { display:flex; gap:2px; background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:3px; }
+    .tab-btn { font-family:'IBM Plex Mono',monospace; font-size:11px; padding:4px 12px; border:none; border-radius:4px; cursor:pointer; background:none; color:var(--text-dim); transition:all .15s; }
+    .tab-btn.active { background:var(--accent); color:#fff; }
+    .tab-btn:not(.active):hover { color:var(--text); background:var(--border); }
+
+    .tpl-strip { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--panel); border:1px solid var(--border); border-radius:6px; }
+    .tpl-strip select { flex:1; border:none; background:none; padding:0; font-size:13px; }
+    .tpl-strip select:focus { box-shadow:none; }
+
+    .btn-sm { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; padding:6px 12px; border-radius:6px; border:1px solid var(--border-hi); background:var(--panel2); color:var(--text); cursor:pointer; white-space:nowrap; transition:all .15s; }
+    .btn-sm:hover { border-color:var(--accent); color:var(--accent); }
+    .btn-sm:disabled { opacity:.35; cursor:not-allowed; }
+
+
+    textarea { width:100%; min-height:240px; background:var(--panel); border:1px solid var(--border); border-radius:6px; color:var(--text-hi); font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.65; padding:14px 16px; resize:vertical; outline:none; transition:border-color .15s, box-shadow .15s; tab-size:2; }
+    textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-lo); }
+
+    .preview-wrap { border:1px solid var(--border); border-radius:6px; overflow:hidden; min-height:240px; background:var(--preview-bg); }
+    .preview-wrap iframe { width:100%; height:100%; min-height:240px; border:none; display:block; }
+
+    .send-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:14px 24px; background:var(--accent); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; border:none; border-radius:6px; cursor:pointer; transition:all .2s; position:relative; overflow:hidden; }
+    .send-btn::before { content:''; position:absolute; inset:0; background:rgba(255,255,255,.1); opacity:0; transition:opacity .15s; }
+    .send-btn:hover::before { opacity:1; }
+    .send-btn:active { transform:scale(.98); }
+    .send-btn:disabled { background:var(--muted); cursor:not-allowed; transform:none; }
+
+    /* DNS */
+    .dns-lookup-bar { display:flex; gap:8px; align-items:flex-end; }
+    .dns-lookup-bar .domain-wrap { flex:1; }
+    .lookup-btn { display:flex; align-items:center; gap:7px; padding:10px 18px; background:var(--accent); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; border:none; border-radius:6px; cursor:pointer; white-space:nowrap; transition:all .15s; letter-spacing:.04em; }
+    .lookup-btn:hover { filter:brightness(1.1); }
+    .lookup-btn:disabled { background:var(--muted); cursor:not-allowed; }
+    .type-grid { display:flex; flex-wrap:wrap; gap:6px; }
+    .type-chip { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; padding:5px 11px; border-radius:20px; cursor:pointer; border:1px solid var(--border); background:var(--panel); color:var(--text-dim); transition:all .15s; letter-spacing:.04em; }
+    .type-chip:hover { border-color:var(--accent); color:var(--accent); }
+    .type-chip.sel { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .type-chip.sel-any { background:var(--purple); border-color:var(--purple); color:#fff; }
+
+    /* ── Resize handle ── */
+    .resize-handle {
+      width:6px; flex-shrink:0; cursor:col-resize; background:transparent;
+      position:relative; z-index:10; transition:background .15s;
+    }
+    .resize-handle:hover, .resize-handle.dragging { background:var(--accent-mid); }
+    .resize-handle::after {
+      content:''; position:absolute; left:2px; top:50%; transform:translateY(-50%);
+      width:2px; height:40px; border-radius:2px; background:var(--border-hi); transition:background .15s;
+    }
+    .resize-handle:hover::after, .resize-handle.dragging::after { background:var(--accent); }
+
+    /* ── Result pane ── */
+    .result-pane { width:420px; min-width:250px; max-width:700px; display:flex; flex-direction:column; overflow:hidden; background:var(--surface); flex-shrink:0; }
+    .pane-header { display:flex; align-items:center; gap:8px; padding:13px 18px; border-bottom:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); font-weight:500; flex-shrink:0; }
+    .status-dot { width:6px; height:6px; border-radius:50%; background:var(--muted); transition:all .3s; flex-shrink:0; }
+    .status-dot.success { background:var(--green); box-shadow:0 0 5px var(--green); }
+    .status-dot.error { background:var(--red); box-shadow:0 0 5px var(--red); }
+    .status-dot.info { background:var(--cyan); box-shadow:0 0 5px var(--cyan); }
+
+    .result-body { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:14px; }
+    .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; opacity:.3; }
+    .empty-icon { font-size:34px; filter:grayscale(1); }
+    .empty-label { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); letter-spacing:.08em; }
+
+    .result-footer { padding:10px 16px; border-top:1px solid var(--border); flex-shrink:0; display:none; }
+    .result-footer.show { display:block; }
+    .clear-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:9px 14px; border-radius:6px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; background:var(--panel); border:1px solid var(--border); color:var(--text-dim); cursor:pointer; transition:all .15s; letter-spacing:.04em; }
+    .clear-btn:hover { border-color:var(--red); color:var(--red); background:var(--red-lo); }
+
+    .result-card { background:var(--panel); border:1px solid var(--border); border-radius:6px; overflow:hidden; animation:fadeUp .2s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .result-card.success { border-color:rgba(62,207,142,.25); }
+    .result-card.error { border-color:rgba(240,103,121,.25); }
+    .result-card.dns { border-color:rgba(56,189,248,.2); }
+    .result-card.diag { border-color:rgba(167,139,250,.25); }
+
+    .rc-head { display:flex; align-items:center; gap:8px; padding:10px 14px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.04em; }
+    .result-card.success .rc-head { background:var(--green-lo); color:var(--green); }
+    .result-card.error .rc-head { background:var(--red-lo); color:var(--red); }
+    .result-card.dns .rc-head { background:rgba(56,189,248,.08); color:var(--cyan); }
+    .result-card.diag .rc-head { background:rgba(167,139,250,.1); color:var(--purple); }
+    .rc-time { margin-left:auto; color:var(--text-dim); font-weight:400; }
+
+    .rc-body { padding:14px; }
+    .rc-row { display:flex; gap:8px; margin-bottom:5px; font-family:'IBM Plex Mono',monospace; font-size:12px; }
+    .rc-key { color:var(--text-dim); min-width:70px; flex-shrink:0; }
+    .rc-val { color:var(--text-hi); word-break:break-all; }
+    .rc-json { background:var(--json-bg); border:1px solid var(--border); border-radius:4px; padding:10px 12px; font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.7; color:var(--text); white-space:pre-wrap; word-break:break-all; margin-top:9px; }
+    .json-key { color:#88aaff; } .json-str { color:var(--green); } .json-num { color:var(--yellow); } .json-bool { color:var(--red); } .json-null { color:var(--text-dim); }
+
+    .dns-domain-header { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+    .dns-domain-val { color:var(--cyan); }
+    .dns-resolver-badge { margin-left:auto; font-size:10px; color:var(--muted); background:var(--panel2); border:1px solid var(--border); border-radius:3px; padding:1px 7px; }
+
+    .dns-section { margin-bottom:14px; } .dns-section:last-child { margin-bottom:0; }
+    .dns-type-label { display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; letter-spacing:.08em; padding:3px 10px; border-radius:3px; margin-bottom:8px; }
+    .dns-type-label.MX { background:rgba(167,139,250,.15); color:var(--purple); border:1px solid rgba(167,139,250,.25); }
+    .dns-type-label.TXT { background:rgba(245,197,24,.12); color:var(--yellow); border:1px solid rgba(245,197,24,.2); }
+    .dns-type-label.A { background:rgba(62,207,142,.12); color:var(--green); border:1px solid rgba(62,207,142,.2); }
+    .dns-type-label.AAAA { background:rgba(62,207,142,.08); color:#2fa86f; border:1px solid rgba(62,207,142,.15); }
+    .dns-type-label.CNAME { background:rgba(56,189,248,.12); color:var(--cyan); border:1px solid rgba(56,189,248,.2); }
+    .dns-type-label.NS { background:rgba(92,138,255,.12); color:var(--accent); border:1px solid rgba(92,138,255,.2); }
+    .dns-type-label.SOA { background:rgba(245,144,74,.12); color:var(--orange); border:1px solid rgba(245,144,74,.2); }
+    .dns-type-label.ERR { background:var(--red-lo); color:var(--red); border:1px solid rgba(240,103,121,.2); }
+
+    .diag-check { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:12px; }
+    .diag-check:last-child { border-bottom:none; }
+    .diag-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+    .diag-info { flex:1; } .diag-test { color:var(--text-hi); font-weight:500; margin-bottom:2px; }
+    .diag-detail { color:var(--text-dim); font-size:11px; }
+    .diag-record { color:var(--text); font-size:11px; word-break:break-all; margin-top:4px; line-height:1.5; }
+
+    .dns-table { width:100%; border-collapse:collapse; font-family:'IBM Plex Mono',monospace; font-size:12px; }
+    .dns-table th { text-align:left; color:var(--text-dim); font-weight:500; padding:5px 8px; border-bottom:1px solid var(--border); letter-spacing:.06em; font-size:10px; }
+    .dns-table td { padding:6px 8px; color:var(--text-hi); vertical-align:top; border-bottom:1px solid rgba(35,40,48,.6); word-break:break-all; }
+    .dns-table tr:last-child td { border-bottom:none; }
+    .dns-table tr:hover td { background:rgba(255,255,255,.02); }
+    [data-theme="light"] .dns-table tr:hover td { background:rgba(0,0,0,.02); }
+    .ttl-badge { font-size:10px; color:var(--text-dim); background:var(--panel2); border:1px solid var(--border); border-radius:3px; padding:1px 6px; white-space:nowrap; }
+    .priority-badge { font-size:11px; font-weight:600; color:var(--purple); background:rgba(167,139,250,.12); border-radius:3px; padding:1px 6px; }
+    .txt-val { color:var(--yellow); word-break:break-word; line-height:1.5; display:block; }
+    .err-note { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); font-style:italic; padding:4px 0; }
+
+    .spinner { width:14px; height:14px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--border-hi); border-radius:3px; }
+
+    .toast { position:fixed; bottom:20px; right:20px; background:var(--panel2); border:1px solid var(--border-hi); border-radius:6px; padding:10px 15px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text); opacity:0; pointer-events:none; transform:translateY(6px); transition:all .2s; z-index:999; }
+    .toast.show { opacity:1; pointer-events:auto; transform:translateY(0); }
+
+    .tool-view { display:none; flex-direction:column; gap:20px; }
+    .tool-view.active { display:flex; }
+
+    @media (max-width:900px) {
+      .workspace { flex-direction:column; }
+      .nav-sidebar { width:100%; flex-direction:row; padding:8px; border-right:none; border-bottom:1px solid var(--border); overflow-x:auto; }
+      .result-pane { display:none; }
+      .resize-handle { display:none; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="logo-mark">✉</div>
+    <span class="logo-text">resend</span><span class="logo-sep">/</span><span class="logo-text" style="color:var(--text-dim)">support toolkit</span>
+    <span class="hdr-badge">v2.2</span>
+    <span class="hdr-spacer"></span>
+    <div class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
+      <span class="theme-toggle-label" id="themeLabel">dark</span>
+      <div class="theme-toggle-track"><div class="theme-toggle-thumb" id="themeThumb"><span id="themeIcon">🌙</span></div></div>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <nav class="nav-sidebar">
+      <div class="nav-section-label">Tools</div>
+      <button class="nav-item active" id="nav-email" onclick="switchTool('email')"><span class="nav-icon">✉</span> Email Tester</button>
+      <button class="nav-item" id="nav-dns" onclick="switchTool('dns')"><span class="nav-icon">🔍</span> DNS Lookup</button>
+    </nav>
+
+    <div class="tool-pane" id="toolPane">
+      <!-- EMAIL TOOL -->
+      <div class="tool-view active" id="tool-email">
+        <div class="pane-title"><span class="pane-title-dot"></span> Email Tester</div>
+        <div class="section"><label>Resend API Key</label><div class="api-wrap"><input type="password" id="apiKey" placeholder="re_••••••••••••••••••••••••••••••••" autocomplete="off" /><button class="eye-btn" id="eyeBtn"><svg id="eyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+        <div class="section"><div class="field-row"><div><label>From</label><input type="text" id="from" placeholder="you@yourdomain.com" style="margin-top:6px" /></div><div><label>To</label><input type="text" id="to" placeholder="recipient@example.com" style="margin-top:6px" /></div></div></div>
+        <div class="section"><label>Subject</label><input type="text" id="subject" placeholder="Your email subject…" /></div>
+        <div class="section">
+          <div class="editor-label-row"><label>Body (HTML)</label><div class="tab-row"><button class="tab-btn active" id="tabCode" onclick="switchEditorTab('code')">Code</button><button class="tab-btn" id="tabPreview" onclick="switchEditorTab('preview')">Preview</button></div></div>
+          <!-- Resend API templates -->
+          <div class="tpl-strip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" style="flex-shrink:0"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <select id="tplSelect" style="color:var(--text-dim)"><option value="">— Import a Resend template —</option></select>
+            <button class="btn-sm" id="loadTplsBtn" onclick="loadTemplates()">Fetch</button>
+            <button class="btn-sm" id="importTplBtn" onclick="importTemplate()" disabled>Import</button>
+          </div>
+          <!-- react.email templates -->
+          <div class="tpl-strip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <select id="reactEmailSelect" style="color:var(--text-dim)"><option value="">— react.email template —</option></select>
+            <button class="btn-sm" id="reactEmailBtn" onclick="importReactEmailTemplate()">Import</button>
+          </div>
+
+          <div id="codeView"><textarea id="htmlBody" placeholder="<h1>Hello!</h1>&#10;<p>Your email body here…</p>" spellcheck="false"></textarea></div>
+          <div id="previewView" style="display:none"><div class="preview-wrap"><iframe id="previewFrame" sandbox="allow-same-origin"></iframe></div></div>
+        </div>
+        <div class="section"><button class="send-btn" id="sendBtn" onclick="sendEmail()"><span id="sendIcon">→</span><span id="sendLabel">Send Email</span></button></div>
+      </div>
+
+      <!-- DNS TOOL -->
+      <div class="tool-view" id="tool-dns">
+        <div class="pane-title"><span class="pane-title-dot" style="background:var(--cyan)"></span> DNS Lookup</div>
+        <div class="section"><label>Domain</label><div class="dns-lookup-bar" style="margin-top:6px"><div class="domain-wrap" style="flex:1"><input type="text" id="dnsDomain" placeholder="example.com" autocomplete="off" onkeydown="if(event.key==='Enter') dnsLookup()" /></div><button class="lookup-btn" id="lookupBtn" onclick="dnsLookup()"><span id="lookupIcon">⌕</span><span id="lookupLabel">Lookup</span></button></div></div>
+        <div class="section"><label>Record Type</label><div class="type-grid" style="margin-top:6px" id="typeChips">
+          <button class="type-chip sel-any" data-type="ANY" onclick="selectType(this)">ANY</button>
+          <button class="type-chip" data-type="MX" onclick="selectType(this)">MX</button>
+          <button class="type-chip" data-type="TXT" onclick="selectType(this)">TXT</button>
+          <button class="type-chip" data-type="A" onclick="selectType(this)">A</button>
+          <button class="type-chip" data-type="AAAA" onclick="selectType(this)">AAAA</button>
+          <button class="type-chip" data-type="CNAME" onclick="selectType(this)">CNAME</button>
+          <button class="type-chip" data-type="NS" onclick="selectType(this)">NS</button>
+          <button class="type-chip" data-type="SOA" onclick="selectType(this)">SOA</button>
+        </div></div>
+        <div class="section" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px 16px;gap:10px">
+          <label style="color:var(--accent)">⚡ Email Diagnostics</label>
+          <div style="font-size:13px;color:var(--text-dim);line-height:1.6">Runs SPF, DKIM, DMARC and MX checks. Enter a domain above, then run a check.</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">
+            <button class="btn-sm" onclick="quickLookup('MX')">MX Records</button>
+            <button class="btn-sm" onclick="quickLookup('TXT')">SPF / DKIM / DMARC</button>
+            <button class="btn-sm" onclick="quickLookup('CNAME')">CNAME</button>
+            <button class="btn-sm" style="border-color:var(--purple);color:var(--purple)" onclick="runEmailDiag()">Full Email Diagnostics</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resize handle -->
+    <div class="resize-handle" id="resizeHandle"></div>
+
+    <!-- Result Pane -->
+    <div class="result-pane" id="resultPane">
+      <div class="pane-header"><div class="status-dot" id="statusDot"></div>Result<span id="resultCount" style="margin-left:auto;color:var(--muted);font-weight:400"></span></div>
+      <div class="result-body" id="resultBody"><div class="empty-state" id="emptyState"><div class="empty-icon">📭</div><div class="empty-label">No results yet</div></div></div>
+      <div class="result-footer" id="resultFooter"><button class="clear-btn" onclick="clearResults()"><span style="font-size:13px">🗑</span> Clear All Results</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Theme ─────────────────────────────────────────────────────
+const themeToggle = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+const themeIcon = document.getElementById('themeIcon');
+function setTheme(t) { document.documentElement.setAttribute('data-theme',t); localStorage.setItem('theme',t); themeLabel.textContent=t; themeIcon.textContent=t==='dark'?'🌙':'☀️'; }
+themeToggle.addEventListener('click',()=>{ setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'); });
+setTheme(localStorage.getItem('theme')||'dark');
+
+// ── Resize handle ─────────────────────────────────────────────
+(function() {
+  const handle = document.getElementById('resizeHandle');
+  const resultPane = document.getElementById('resultPane');
+  let dragging = false, startX, startW;
+
+  handle.addEventListener('mousedown', e => {
+    dragging = true; startX = e.clientX; startW = resultPane.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const delta = startX - e.clientX;
+    const newW = Math.min(700, Math.max(250, startW + delta));
+    resultPane.style.width = newW + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
+// ── Tool navigation ───────────────────────────────────────────
+function switchTool(tool) {
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('nav-'+tool).classList.add('active');
+  document.querySelectorAll('.tool-view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tool-'+tool).classList.add('active');
+}
+
+// ── Editor tab ────────────────────────────────────────────────
+let currentEditorTab='code';
+function switchEditorTab(tab) {
+  currentEditorTab=tab;
+  document.getElementById('codeView').style.display=tab==='code'?'block':'none';
+  document.getElementById('previewView').style.display=tab==='preview'?'block':'none';
+  document.getElementById('tabCode').classList.toggle('active',tab==='code');
+  document.getElementById('tabPreview').classList.toggle('active',tab==='preview');
+  if(tab==='preview') refreshPreview();
+}
+function refreshPreview() {
+  const html=document.getElementById('htmlBody').value;
+  const frame=document.getElementById('previewFrame');
+  const doc=frame.contentDocument||frame.contentWindow.document;
+  doc.open();doc.write(html);doc.close();
+  setTimeout(()=>{frame.style.height=Math.max(240,doc.body.scrollHeight+20)+'px';},50);
+}
+document.getElementById('htmlBody').addEventListener('input',()=>{ if(currentEditorTab==='preview') refreshPreview(); });
+
+// ── Eye toggle ────────────────────────────────────────────────
+let apiVisible=false;
+document.getElementById('eyeBtn').addEventListener('click',()=>{
+  apiVisible=!apiVisible;
+  document.getElementById('apiKey').type=apiVisible?'text':'password';
+  document.getElementById('eyeIcon').innerHTML=apiVisible
+    ?'<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    :'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+});
+
+// ── Resend API Templates ──────────────────────────────────────
+async function loadTemplates() {
+  const apiKey=document.getElementById('apiKey').value.trim();
+  if(!apiKey){showToast('Enter your API key first');return;}
+  const btn=document.getElementById('loadTplsBtn'); btn.textContent='Loading…';btn.disabled=true;
+  try {
+    const res=await fetch('/api/templates',{headers:{'x-api-key':apiKey}});
+    const data=await res.json();
+    if(data.error||!res.ok){showToast('Error: '+(data.error?.message||JSON.stringify(data.error)));return;}
+    const templates=data.data||data.templates||data||[];
+    const list=Array.isArray(templates)?templates:[];
+    const sel=document.getElementById('tplSelect');
+    sel.innerHTML='<option value="">— Select a template —</option>';
+    list.forEach(t=>{const opt=document.createElement('option');opt.value=t.id;opt.textContent=t.name||t.id;sel.appendChild(opt);});
+    document.getElementById('importTplBtn').disabled=false;
+    showToast(`${list.length} template(s) loaded`);
+  } catch(e){showToast('Network error: '+e.message);}
+  finally{btn.textContent='Fetch';btn.disabled=false;}
+}
+
+async function importTemplate() {
+  const id=document.getElementById('tplSelect').value;
+  if(!id){showToast('Select a template first');return;}
+  const apiKey=document.getElementById('apiKey').value.trim();
+  const btn=document.getElementById('importTplBtn'); btn.textContent='Importing…';btn.disabled=true;
+  try {
+    const res=await fetch(`/api/templates/${id}`,{headers:{'x-api-key':apiKey}});
+    const data=await res.json();
+    if(data.error||!res.ok){showToast('Error: '+(data.error?.message||JSON.stringify(data.error)));return;}
+    document.getElementById('htmlBody').value=data.html_content||data.html||data.content||'';
+    if(currentEditorTab==='preview') refreshPreview();
+    showToast('Template imported ✓');
+  } catch(e){showToast('Network error: '+e.message);}
+  finally{btn.textContent='Import';btn.disabled=false;}
+}
+
+// ── react.email Templates ─────────────────────────────────────
+(async function loadReactEmailList() {
+  try {
+    const res = await fetch('/api/react-email-templates');
+    const data = await res.json();
+    const sel = document.getElementById('reactEmailSelect');
+    (data.templates || []).forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.path; opt.textContent = t.name;
+      sel.appendChild(opt);
+    });
+  } catch(e) { console.warn('Could not load react.email list', e); }
+})();
+
+async function importReactEmailTemplate() {
+  const sel = document.getElementById('reactEmailSelect');
+  const path = sel.value;
+  if (!path) { showToast('Select a react.email template first'); return; }
+  const btn = document.getElementById('reactEmailBtn');
+  btn.textContent = 'Loading…'; btn.disabled = true;
+  try {
+    const res = await fetch(`/api/react-email-templates/source?path=${encodeURIComponent(path)}`);
+    const data = await res.json();
+    if (data.error) { showToast('Error: ' + data.error); return; }
+    document.getElementById('htmlBody').value = data.html;
+    if (currentEditorTab === 'preview') refreshPreview();
+    showToast('Template imported as HTML ✓');
+  } catch(e) { showToast('Error: ' + e.message); }
+  finally { btn.textContent = 'Import'; btn.disabled = false; }
+}
+
+// ── Email send ────────────────────────────────────────────────
+let resultCount=0;
+async function sendEmail() {
+  const apiKey=document.getElementById('apiKey').value.trim(), from=document.getElementById('from').value.trim(), to=document.getElementById('to').value.trim(), subject=document.getElementById('subject').value.trim(), html=document.getElementById('htmlBody').value;
+  if(!apiKey){showToast('API key required');return;} if(!from){showToast('From required');return;} if(!to){showToast('To required');return;} if(!subject){showToast('Subject required');return;} if(!html){showToast('Body required');return;}
+  setEmailSending(true); const t0=Date.now();
+  try {
+    const res=await fetch('/api/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({apiKey,from,to,subject,html})});
+    const data=await res.json();
+    appendEmailResult(res.ok&&data.success,data,{from,to,subject,elapsed:Date.now()-t0});
+  } catch(e){ appendEmailResult(false,{error:{message:e.message}},{from,to,subject,elapsed:Date.now()-t0}); }
+  finally{setEmailSending(false);}
+}
+function setEmailSending(on) { const btn=document.getElementById('sendBtn'); btn.disabled=on; document.getElementById('sendIcon').innerHTML=on?'<div class="spinner"></div>':'→'; document.getElementById('sendLabel').textContent=on?'Sending…':'Send Email'; }
+function appendEmailResult(ok,data,meta) {
+  document.getElementById('emptyState')?.remove(); resultCount++; setStatus(ok?'success':'error'); updateCount(); showFooter();
+  const payload=ok?data.data:data.error;
+  const card=document.createElement('div'); card.className=`result-card ${ok?'success':'error'}`;
+  card.innerHTML=`<div class="rc-head">${ok?'✓ Delivered':'✗ Failed'}<span class="rc-time">${meta.elapsed}ms · ${ts()}</span></div><div class="rc-body"><div class="rc-row"><span class="rc-key">from</span><span class="rc-val">${esc(meta.from)}</span></div><div class="rc-row"><span class="rc-key">to</span><span class="rc-val">${esc(meta.to)}</span></div><div class="rc-row"><span class="rc-key">subject</span><span class="rc-val">${esc(meta.subject)}</span></div><div class="rc-json">${syntaxHighlight(payload)}</div></div>`;
+  prepend(card);
+}
+
+// ── DNS ───────────────────────────────────────────────────────
+let selectedType='ANY';
+function selectType(btn) { selectedType=btn.dataset.type; document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('sel','sel-any')); btn.classList.add(selectedType==='ANY'?'sel-any':'sel'); }
+function quickLookup(type) { document.querySelectorAll('.type-chip').forEach(c=>{c.classList.remove('sel','sel-any');if(c.dataset.type===type)c.classList.add('sel');}); selectedType=type; dnsLookup(); }
+
+async function dnsLookup() {
+  const domain=document.getElementById('dnsDomain').value.trim(); if(!domain){showToast('Enter a domain');return;}
+  setDnsLooking(true); const t0=Date.now();
+  try { const res=await fetch(`/api/dns?domain=${encodeURIComponent(domain)}&type=${selectedType}`); const data=await res.json(); appendDnsResult(data,Date.now()-t0); }
+  catch(e){ appendDnsResult({domain,type:selectedType,results:{},errors:{_:e.message}},Date.now()-t0); }
+  finally{setDnsLooking(false);}
+}
+function setDnsLooking(on) { const btn=document.getElementById('lookupBtn'); btn.disabled=on; document.getElementById('lookupIcon').innerHTML=on?'<div class="spinner"></div>':'⌕'; document.getElementById('lookupLabel').textContent=on?'Looking up…':'Lookup'; }
+
+function appendDnsResult(data,elapsed) {
+  document.getElementById('emptyState')?.remove(); resultCount++;
+  const hasResults=Object.keys(data.results||{}).some(k=>{const v=data.results[k];return v&&(Array.isArray(v)?v.length>0:true);});
+  setStatus(hasResults?'info':'error'); updateCount(); showFooter();
+  const card=document.createElement('div'); card.className='result-card dns';
+  const typeLabel=data.type==='ANY'?'ALL Records':data.type;
+  const resolver=data.resolver?`<span class="dns-resolver-badge">via ${esc(data.resolver)}</span>`:'';
+  card.innerHTML=`<div class="rc-head">🔍 DNS · ${esc(typeLabel)}<span class="rc-time">${data.elapsed||elapsed}ms · ${ts()}</span></div><div class="rc-body"><div class="dns-domain-header">domain <span class="dns-domain-val">${esc(data.domain)}</span>${resolver}</div>${renderDnsResults(data.results||{},data.errors||{},data.timing||{})}</div>`;
+  prepend(card);
+}
+
+function renderDnsResults(results,errors,timing) {
+  const ORDER=['MX','TXT','A','AAAA','CNAME','NS','SOA','SRV','PTR','CAA','NAPTR'];
+  let html=''; const allTypes=[...new Set([...ORDER.filter(t=>results[t]!==undefined||errors[t]),...Object.keys(results),...Object.keys(errors)])];
+  for(const type of allTypes) {
+    const recs=results[type],err=errors[type],el=timing[type];
+    const timeStr=el?` <span style="color:var(--text-dim);font-weight:400;font-size:9px;margin-left:6px">${el}ms</span>`:'';
+    html+=`<div class="dns-section"><div class="dns-type-label ${type}">${type}${timeStr}</div>`;
+    if(err) html+=`<div class="err-note">${esc(dnsErrFriendly(err))}</div>`;
+    else if(!recs||!recs.length) html+=`<div class="err-note">No data</div>`;
+    else html+=renderRecordType(type,recs);
+    html+=`</div>`;
+  }
+  return html||'<div class="err-note">No records found.</div>';
+}
+function dnsErrFriendly(c) { const m={ENODATA:'No records of this type',ENOTFOUND:'Domain not found',NXDOMAIN:'Domain does not exist (NXDOMAIN)',SERVFAIL:'DNS server failure',REFUSED:'Query refused'}; return m[c]||c; }
+
+function renderRecordType(type,data) {
+  if(!data||!data.length) return '<div class="err-note">No records</div>';
+  switch(type) {
+    case 'MX': return renderTable(['Priority','Exchange','TTL'],data.map(r=>[`<span class="priority-badge">${r.priority}</span>`,esc(r.exchange||r.value||r.raw),`<span class="ttl-badge">${r.ttl}s</span>`]));
+    case 'TXT': return renderTable(['Value','TTL'],data.map(r=>[`<span class="txt-val">${esc(r.value||r.raw)}</span>`,r.ttl!=null?`<span class="ttl-badge">${r.ttl}s</span>`:'']));
+    case 'A': case 'AAAA': return renderTable(['Address','TTL'],data.map(r=>[esc(r.value||r.raw),r.ttl!=null?`<span class="ttl-badge">${r.ttl}s</span>`:'']));
+    case 'CNAME': case 'NS': case 'PTR': return renderTable(['Value','TTL'],data.map(r=>[esc(r.value||r.raw),r.ttl!=null?`<span class="ttl-badge">${r.ttl}s</span>`:'']));
+    case 'SOA': if(data[0]){const s=data[0]; return `<table class="dns-table"><tbody><tr><th>Primary NS</th><td>${esc(s.mname||'')}</td></tr><tr><th>Responsible</th><td>${esc(s.rname||'')}</td></tr><tr><th>Serial</th><td>${s.serial||''}</td></tr><tr><th>Refresh</th><td>${s.refresh||''}s</td></tr><tr><th>Retry</th><td>${s.retry||''}s</td></tr><tr><th>Expire</th><td>${s.expire||''}s</td></tr><tr><th>TTL</th><td><span class="ttl-badge">${s.ttl||''}s</span></td></tr></tbody></table>`;}
+    default: return `<div class="rc-json">${syntaxHighlight(data)}</div>`;
+  }
+}
+function renderTable(h,rows) { return `<table class="dns-table"><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`; }
+
+async function runEmailDiag() {
+  const domain=document.getElementById('dnsDomain').value.trim(); if(!domain){showToast('Enter a domain');return;}
+  setDnsLooking(true);
+  try { const res=await fetch(`/api/dns/email-diag?domain=${encodeURIComponent(domain)}`); const data=await res.json(); appendDiagResult(data); }
+  catch(e){showToast('Error: '+e.message);} finally{setDnsLooking(false);}
+}
+function appendDiagResult(data) {
+  document.getElementById('emptyState')?.remove(); resultCount++;
+  const hasFail=data.checks.some(c=>c.status==='fail'); setStatus(hasFail?'error':'info'); updateCount(); showFooter();
+  const icons={pass:'✅',fail:'❌',warn:'⚠️',info:'ℹ️'};
+  let ch=''; for(const c of data.checks) {
+    let rec=''; if(c.records) rec=c.records.map(r=>`<div class="diag-record">${r.priority!=null?'['+r.priority+'] ':''}${esc(r.exchange||r.value||r.raw||'')}</div>`).join('');
+    ch+=`<div class="diag-check"><span class="diag-icon">${icons[c.status]||'•'}</span><div class="diag-info"><div class="diag-test">${esc(c.test)}</div><div class="diag-detail">${esc(c.detail)}</div>${rec}</div></div>`;
+  }
+  const card=document.createElement('div'); card.className='result-card diag';
+  card.innerHTML=`<div class="rc-head">🛡 Email Diagnostics<span class="rc-time">${data.elapsed}ms · ${ts()}</span></div><div class="rc-body"><div class="dns-domain-header">domain <span class="dns-domain-val">${esc(data.domain)}</span><span class="dns-resolver-badge">via ${esc(data.resolver||'dns.google')}</span></div>${ch}</div>`;
+  prepend(card);
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function setStatus(t){document.getElementById('statusDot').className='status-dot '+t;}
+function updateCount(){document.getElementById('resultCount').textContent=resultCount+(resultCount===1?' result':' results');}
+function prepend(el){document.getElementById('resultBody').insertBefore(el,document.getElementById('resultBody').firstChild);}
+function showFooter(){document.getElementById('resultFooter').classList.add('show');}
+function ts(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function clearResults(){document.getElementById('resultBody').innerHTML='<div class="empty-state" id="emptyState"><div class="empty-icon">📭</div><div class="empty-label">No results yet</div></div>';resultCount=0;document.getElementById('resultCount').textContent='';document.getElementById('statusDot').className='status-dot';document.getElementById('resultFooter').classList.remove('show');}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function syntaxHighlight(obj){if(obj==null)return'<span class="json-null">null</span>';const j=JSON.stringify(obj,null,2);return j.replace(/(\"(?:\\\\u[a-zA-Z0-9]{4}|\\\\[^u]|[^\\\\\"])*\"(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{let c='json-num';if(/^\"/.test(m))c=/:$/.test(m)?'json-key':'json-str';else if(/true|false/.test(m))c='json-bool';else if(/null/.test(m))c='json-null';return`<span class="${c}">${esc(m)}</span>`;});}
+let toastTimer;function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3000);}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter')sendEmail();});
+</script>
+</body>
+</html>
