@@ -1,6 +1,6 @@
 {
-  "name": "resend-email-tester",
-  "version": "1.0.0",
+  "name": "Resend Support Toolkit",
+  "version": "2.3.0",
   "description": "A UI for testing Resend email sending",
   "main": "server.js",
   "scripts": {
