@@ -37,3 +37,4 @@ Then open **http://localhost:3001** in your browser.
 - The **From** address must be from a verified domain in your Resend account
 - Templates are fetched live from the Resend API using your key
 - All API calls are proxied through the local Express server (no CORS issues)
+- add more notes here
