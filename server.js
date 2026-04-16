@@ -3,6 +3,8 @@ const fetch = require("node-fetch");
 const cors = require("cors");
 const path = require("path");
 const crypto = require("crypto");
+const os = require("os");
+const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -102,30 +104,118 @@ app.get("/api/templates/:id", requireAuth, async (req, res) => {
 });
 
 // ── React Email Templates (from react.email/templates) ────────
+// Paths are relative to apps/demo/emails/ in the react-email canary branch.
+// Community/ = real-world brand replicas  |  0x-* = design-system sets
 const REACT_EMAIL_TEMPLATES = [
-  { name: "AWS / Verify Email",            path: "magic-links/aws-verify-email" },
-  { name: "GitHub / Access Token",         path: "notifications/github-access-token" },
-  { name: "Apple / Receipt",               path: "receipts/apple-receipt" },
-  { name: "Nike / Receipt",                path: "receipts/nike-receipt" },
-  { name: "Stack Overflow / Tips",         path: "newsletters/stack-overflow-tips" },
-  { name: "Slack / Confirm Email",         path: "magic-links/slack-confirm" },
-  { name: "Twitch / Reset Password",       path: "reset-password/twitch-reset-password" },
-  { name: "Raycast / Magic Link",          path: "magic-links/raycast-magic-link" },
-  { name: "Yelp / Recent Login",           path: "notifications/yelp-recent-login" },
-  { name: "Linear / Login Code",           path: "magic-links/linear-login-code" },
-  { name: "Google Play / Policy Update",   path: "newsletters/google-play-policy-update" },
-  { name: "Airbnb / Review",               path: "reviews/airbnb-review" },
-  { name: "Dropbox / Reset Password",      path: "reset-password/dropbox-reset-password" },
-  { name: "Koala / Welcome",               path: "welcome/koala-welcome" },
-  { name: "Vercel / Invite User",          path: "notifications/vercel-invite-user" },
-  { name: "Stripe / Welcome",              path: "welcome/stripe-welcome" },
-  { name: "Notion / Magic Link",           path: "magic-links/notion-magic-link" },
-  { name: "Plaid / Verify Identity",       path: "magic-links/plaid-verify-identity" },
+  // ── Magic Links ───────────────────────────────────────────────
+  { name: "AWS / Verify Email",            path: "Community/magic-links/aws-verify-email" },
+  { name: "Slack / Confirm Email",         path: "Community/magic-links/slack-confirm" },
+  { name: "Notion / Magic Link",           path: "Community/magic-links/notion-magic-link" },
+  { name: "Linear / Login Code",           path: "Community/magic-links/linear-login-code" },
+  { name: "Raycast / Magic Link",          path: "Community/magic-links/raycast-magic-link" },
+  { name: "Plaid / Verify Identity",       path: "Community/magic-links/plaid-verify-identity" },
+  // ── Notifications ─────────────────────────────────────────────
+  { name: "GitHub / Access Token",         path: "Community/notifications/github-access-token" },
+  { name: "Vercel / Invite User",          path: "Community/notifications/vercel-invite-user" },
+  { name: "Yelp / Recent Login",           path: "Community/notifications/yelp-recent-login" },
+  { name: "Papermark / Year in Review",    path: "Community/notifications/papermark-year-in-review" },
+  // ── Receipts ──────────────────────────────────────────────────
+  { name: "Apple / Receipt",               path: "Community/receipts/apple-receipt" },
+  { name: "Nike / Receipt",                path: "Community/receipts/nike-receipt" },
+  // ── Newsletters ───────────────────────────────────────────────
+  { name: "Stack Overflow / Tips",         path: "Community/newsletters/stack-overflow-tips" },
+  { name: "Google Play / Policy Update",   path: "Community/newsletters/google-play-policy-update" },
+  { name: "Codepen / Challengers",         path: "Community/newsletters/codepen-challengers" },
+  // ── Reset Password ────────────────────────────────────────────
+  { name: "Twitch / Reset Password",       path: "Community/reset-password/twitch-reset-password" },
+  { name: "Dropbox / Reset Password",      path: "Community/reset-password/dropbox-reset-password" },
+  // ── Reviews ───────────────────────────────────────────────────
+  { name: "Airbnb / Review",               path: "Community/reviews/airbnb-review" },
+  { name: "Amazon / Review",               path: "Community/reviews/amazon-review" },
+  // ── Welcome ───────────────────────────────────────────────────
+  { name: "Koala / Welcome",               path: "Community/welcome/koala-welcome" },
+  { name: "Stripe / Welcome",              path: "Community/welcome/stripe-welcome" },
+  { name: "Netlify / Welcome",             path: "Community/welcome/netlify-welcome" },
+  // ── Design Systems ────────────────────────────────────────────
+  { name: "Barebone / Activation",         path: "01-Barebone/activation" },
+  { name: "Barebone / Welcome",            path: "01-Barebone/welcome" },
+  { name: "Barebone / Password Reset",     path: "01-Barebone/password-reset" },
+  { name: "Barebone / Feature Announcement", path: "01-Barebone/feature-announcement" },
+  { name: "Barebone / Product Update",     path: "01-Barebone/product-update" },
+  { name: "Matte / Activation",            path: "02-Matte/activation" },
+  { name: "Matte / Welcome",               path: "02-Matte/welcome" },
+  { name: "Matte / Password Reset",        path: "02-Matte/password-reset" },
+  { name: "Protocol / Activation",         path: "03-Protocol/activation" },
+  { name: "Protocol / Welcome",            path: "03-Protocol/welcome" },
+  { name: "Arcane / Activation",           path: "04-Arcane/activation" },
+  { name: "Arcane / Welcome",              path: "04-Arcane/welcome" },
+  { name: "Arcane / Order Confirmation",   path: "04-Arcane/order-confirmation" },
+  { name: "Studio / Activation",           path: "05-Studio/activation" },
+  { name: "Studio / Welcome",              path: "05-Studio/welcome" },
+  { name: "Studio / Order Confirmation",   path: "05-Studio/order-confirmation" },
 ];
 
 app.get("/api/react-email-templates", requireAuth, (req, res) => {
   res.json({ templates: REACT_EMAIL_TEMPLATES });
 });
+
+// ── React Email: fetch + render a template to HTML ────────────
+const _tplCache = new Map(); // path → { html, at }
+const _TPL_TTL  = 3600 * 1000; // 1 hour
+
+async function renderReactEmailTemplate(tsxSource, cacheKey) {
+  const hit = _tplCache.get(cacheKey);
+  if (hit && Date.now() - hit.at < _TPL_TTL) return hit.html;
+
+  const esbuild = require("esbuild");
+  const React   = require("react");
+  const { render } = require("@react-email/render");
+
+  const buildResult = await esbuild.build({
+    stdin: { contents: tsxSource, loader: "tsx", resolveDir: __dirname },
+    bundle:   true,
+    format:   "cjs",
+    write:    false,
+    platform: "node",
+    target:   "node18",
+    logLevel: "silent",
+    jsx:      "automatic",
+    plugins: [{
+      name: "email-shims",
+      setup(build) {
+        // Templates import from 'react-email' → alias to installed @react-email/components
+        build.onResolve({ filter: /^react-email$/ }, () => ({
+          path: require.resolve("@react-email/components"),
+        }));
+        // Mock the relative tailwind.config import (custom fonts/colors – not needed for preview)
+        build.onResolve({ filter: /tailwind\.config/ }, () => ({
+          path: "tw-cfg-shim", namespace: "virtual",
+        }));
+        build.onLoad({ filter: /.*/, namespace: "virtual" }, () => ({
+          contents: "module.exports = {}", loader: "js",
+        }));
+      },
+    }],
+  });
+
+  // Write bundle to a temp file and require it (more reliable than vm)
+  const tmpPath = path.join(os.tmpdir(), `rse-${Date.now()}-${Math.random().toString(36).slice(2)}.cjs`);
+  fs.writeFileSync(tmpPath, buildResult.outputFiles[0].text);
+
+  let html;
+  try {
+    delete require.cache[tmpPath];
+    const mod = require(tmpPath);
+    const Component = mod.default ?? Object.values(mod).find(v => typeof v === "function");
+    if (typeof Component !== "function") throw new Error("No React component found in template");
+    html = await Promise.resolve(render(React.createElement(Component), { pretty: true }));
+  } finally {
+    setTimeout(() => { try { delete require.cache[tmpPath]; fs.unlinkSync(tmpPath); } catch {} }, 2000);
+  }
+
+  _tplCache.set(cacheKey, { html, at: Date.now() });
+  return html;
+}
 
 app.get("/api/react-email-templates/source", requireAuth, async (req, res) => {
   const { path: tplPath } = req.query;
@@ -134,9 +224,9 @@ app.get("/api/react-email-templates/source", requireAuth, async (req, res) => {
   const rawUrl = `https://raw.githubusercontent.com/resend/react-email/canary/apps/demo/emails/${tplPath}.tsx`;
   try {
     const response = await fetch(rawUrl, { headers: { "User-Agent": "resend-tester" } });
-    if (!response.ok) return res.status(response.status).json({ error: `GitHub: ${response.statusText}` });
+    if (!response.ok) return res.status(response.status).json({ error: `Could not fetch template from GitHub (${response.status}). The template path may have changed.` });
     const source = await response.text();
-    const html = convertTsxToHtml(source);
+    const html = await renderReactEmailTemplate(source, tplPath);
     return res.json({ html, rawUrl });
   } catch (err) {
     return res.status(500).json({ error: err.message });
