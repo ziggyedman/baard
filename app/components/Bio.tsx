@@ -33,9 +33,9 @@ export default function Bio() {
           style={{ color: "var(--color-maroon-dark)" }}
         >
           <p>
-            Michael Vaz is a Portugal-based Support Engineer with over two
-            decades of experience turning complex technical problems into elegant solutions. Equal
-            parts engineer, troubleshooter, and people-person — he operates where deep technical
+            Michael Vaz is a Portugal-based experienced Support Engineer that
+            turns complex technical problems into elegant solutions. Equal
+            parts engineer, troubleshooter, and people-person, he operates where deep technical
             expertise meets calm under pressure.
           </p>
           <p>
