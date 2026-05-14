@@ -1,39 +1,33 @@
 const hobbies = [
   {
-    emoji: "📈",
-    title: "Trading",
-    description:
-      "Markets are the world's most honest feedback loop. Reading charts, sizing positions, and staying disciplined under pressure.",
-  },
-  {
-    emoji: "🏋️",
-    title: "Fitness",
-    description:
-      "The gym is where mental clarity is forged. Consistent reps, heavy lifts, and the discipline that bleeds into everything else.",
-  },
-  {
     emoji: "✈️",
     title: "Travel",
     description:
       "Different cities, different cultures, different perspectives. The best education you can't get in a classroom.",
   },
   {
-    emoji: "🎵",
-    title: "Music",
+    emoji: "☕",
+    title: "Coffee",
     description:
-      "From deep house to classic rock — the right track makes everything sharper. Also dabbles in production.",
-  },
-  {
-    emoji: "📚",
-    title: "Reading",
-    description:
-      "Biographies, history, philosophy, and the occasional sci-fi rabbit hole. Books are leverage for the mind.",
+      "A serious pursuit. From single-origin pour-overs to a perfectly pulled espresso — the ritual matters as much as the cup.",
   },
   {
     emoji: "🛠️",
     title: "Building",
     description:
       "Side projects, prototypes, and experiments. The joy of creating something from nothing never gets old.",
+  },
+  {
+    emoji: "🎮",
+    title: "Gaming",
+    description:
+      "Strategy, story, and the occasional all-nighter. Games are the intersection of design, logic, and pure fun.",
+  },
+  {
+    emoji: "🎵",
+    title: "Music",
+    description:
+      "From deep house to classic rock — the right track makes everything sharper. Always on, always loud.",
   },
 ];
 
