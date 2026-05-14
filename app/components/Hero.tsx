@@ -4,10 +4,10 @@ import { FaInstagram, FaLinkedinIn, FaXTwitter, FaFacebook, FaGithub } from "rea
 import { ChevronDown } from "lucide-react";
 
 const socials = [
-  { icon: FaInstagram, label: "Instagram", href: "https://instagram.com/YOUR_HANDLE" },
-  { icon: FaLinkedinIn, label: "LinkedIn", href: "https://linkedin.com/in/michaelvaz" },
-  { icon: FaXTwitter, label: "X", href: "https://x.com/YOUR_HANDLE" },
-  { icon: FaFacebook, label: "Facebook", href: "https://facebook.com/YOUR_HANDLE" },
+  { icon: FaInstagram, label: "Instagram", href: "https://www.instagram.com/ziggyedman/" },
+  { icon: FaLinkedinIn, label: "LinkedIn", href: "https://www.linkedin.com/in/michaelvaz/" },
+  { icon: FaXTwitter, label: "X", href: "https://x.com/ziggyedman" },
+  { icon: FaFacebook, label: "Facebook", href: "https://www.facebook.com/themichaelvaz" },
   { icon: FaGithub, label: "GitHub", href: "https://github.com/ziggyedman" },
 ];
 
