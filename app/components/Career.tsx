@@ -1,27 +1,38 @@
 const credits = [
   {
-    role: "Founder & CEO",
-    company: "Your Company Name",
-    period: "2022 — Present",
-    description: "Building something remarkable from the ground up.",
+    role: "Principal Support Engineer",
+    company: "Atlassian",
+    period: "2024 — Present",
+    description:
+      "Handling the hardest problems at one of the world's leading software companies. Deep technical expertise across the Atlassian product suite, supporting enterprise customers at scale.",
   },
   {
-    role: "Senior Product Manager",
-    company: "Previous Company",
-    period: "2019 — 2022",
-    description: "Led cross-functional teams to ship products used by millions.",
+    role: "Tech Lead → Support Engineering",
+    company: "Loom",
+    period: "2019 — 2024",
+    description:
+      "Five years across four roles — from Founding Engineer to Tech Lead. Built the support function from the ground up, mentored teams, collaborated with Product & Engineering, and owned the technical escalation path. Loom was later acquired by Atlassian.",
   },
   {
-    role: "Software Engineer",
-    company: "Earlier Company",
-    period: "2016 — 2019",
-    description: "Wrote production code, shipped features, learned fast.",
+    role: "Senior Technical Support Engineer",
+    company: "Sophos",
+    period: "2015 — 2018",
+    description:
+      "Escalations engineer for Endpoint Security Group in Vancouver. Resolved complex cases across Sophos Central, InterceptX, and Exchange security products. Helped launch and mentor the LATAM support team in Buenos Aires.",
   },
   {
-    role: "Intern → Full-Time",
-    company: "First Company",
-    period: "2014 — 2016",
-    description: "Where it all began — wearing every hat available.",
+    role: "IT Network & Systems Administrator",
+    company: "RIS2048 / Gres Panaria Portugal",
+    period: "2010 — 2015",
+    description:
+      "Enterprise IT infrastructure across manufacturing and ceramics industries in Portugal. Server provisioning, security monitoring, backup operations, and HP BladeSystem solutions as a Hewlett Packard CSN Engineer.",
+  },
+  {
+    role: "IT Network & Systems Administrator",
+    company: "Serviços Municipalizados de Aveiro",
+    period: "2002 — 2010",
+    description:
+      "Nearly eight years managing city-level IT infrastructure — network administration, system audits, messaging systems, security, and helpdesk. Where the foundation was built.",
   },
 ];
 
@@ -55,7 +66,6 @@ export default function Career() {
 
         <hr className="section-rule mb-12" style={{ borderColor: "var(--color-cream)" }} />
 
-        {/* Credits list */}
         <div className="space-y-0">
           {credits.map((item, i) => (
             <div key={i}>
@@ -94,14 +104,6 @@ export default function Career() {
             </div>
           ))}
         </div>
-
-        <p
-          className="mt-10 text-xs tracking-[0.3em] uppercase"
-          style={{ color: "var(--color-cream)", opacity: 0.4 }}
-        >
-          * Update career entries in{" "}
-          <code className="opacity-70">app/components/Career.tsx</code> with your LinkedIn data
-        </p>
       </div>
     </section>
   );

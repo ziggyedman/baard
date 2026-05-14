@@ -28,28 +28,31 @@ export default function Bio() {
 
         <hr className="section-rule mb-10" style={{ borderColor: "var(--color-maroon-dark)" }} />
 
-        {/* Bio content — edit this */}
         <div
           className="space-y-6 text-lg md:text-xl leading-relaxed max-w-2xl"
           style={{ color: "var(--color-maroon-dark)" }}
         >
           <p>
-            Michael Vaz is a builder, trader, and creator with a passion for turning ideas into
-            reality. With a background spanning technology, finance, and entrepreneurship, he brings
-            a unique blend of analytical precision and creative energy to everything he does.
+            Michael Vaz is a Portugal-based Support Engineer with over two
+            decades of experience turning complex technical problems into elegant solutions. Equal
+            parts engineer, troubleshooter, and people-person — he operates where deep technical
+            expertise meets calm under pressure.
           </p>
           <p>
-            Whether he&apos;s architecting software systems, navigating markets, or launching new
-            ventures, Michael operates at the intersection of innovation and execution — always
-            looking for the edge between what exists and what&apos;s possible.
+            His career spans cybersecurity, enterprise messaging, cloud infrastructure, and product
+            support engineering across companies like Atlassian, Loom, and Sophos — working across
+            Vancouver, the Netherlands, and Portugal. He&apos;s the person teams call when
+            escalations get hard, when systems go down at the worst possible time, and when someone
+            needs to translate complexity into clarity.
           </p>
           <p>
-            Based across continents, he&apos;s driven by curiosity, fuelled by coffee, and obsessed
-            with the craft of building things that matter.
+            Certified MSCE, MCITP, and MCSA. Fluent in Portuguese, English, and the universal
+            language of a well-written post-mortem. Always building, always learning, always one
+            troubleshooting session away from a breakthrough.
           </p>
         </div>
 
-        {/* Decorative corner stamp */}
+        {/* Decorative corner */}
         <div
           className="absolute bottom-8 right-8 md:bottom-12 md:right-12 opacity-20 text-right"
           style={{ fontFamily: "var(--font-bebas)", color: "var(--color-maroon-dark)", fontSize: "6rem", lineHeight: 1 }}
