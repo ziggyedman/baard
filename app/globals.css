@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-blue-electric: #1635FF;
+  --color-green-vivid: #3AC44F;
+  --color-orange-hot: #FF6B1A;
+  --color-maroon-dark: #2D1040;
+  --color-cream: #F5EFE0;
+
+  --font-bebas: "Bebas Neue", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter);
+  background: var(--color-maroon-dark);
+  color: var(--color-cream);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* 3D extruded text — matches the movie poster shadow style */
+.text-3d {
+  text-shadow:
+    3px 3px 0 var(--color-maroon-dark),
+    6px 6px 0 var(--color-maroon-dark),
+    9px 9px 0 var(--color-maroon-dark),
+    12px 12px 0 #1a0828;
+}
+
+.text-3d-sm {
+  text-shadow:
+    2px 2px 0 var(--color-maroon-dark),
+    4px 4px 0 var(--color-maroon-dark);
+}
+
+/* Film grain overlay */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Rating badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-cream);
+  font-family: var(--font-bebas);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  color: var(--color-cream);
+  line-height: 1;
+}
+
+/* Section rule */
+.section-rule {
+  border: none;
+  border-top: 3px solid currentColor;
+  opacity: 0.4;
+}
+
+/* Hover glow for social icons */
+.social-icon {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.social-icon:hover {
+  transform: translateY(-3px) scale(1.1);
+  filter: drop-shadow(0 0 8px var(--color-orange-hot));
+}
