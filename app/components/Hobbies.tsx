@@ -42,7 +42,7 @@ export default function Hobbies() {
         {/* Label */}
         <p
           className="text-sm tracking-[0.4em] uppercase mb-2"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-maroon-dark)", opacity: 0.6 }}
+          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.6 }}
         >
           Act III
         </p>
@@ -59,10 +59,10 @@ export default function Hobbies() {
           Special Features
         </h2>
 
-        <hr className="section-rule mb-12" style={{ borderColor: "var(--color-maroon-dark)" }} />
+        <hr className="section-rule mb-12" style={{ borderColor: "var(--color-cream)" }} />
 
         {/* Hobby grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ border: "3px solid var(--color-maroon-dark)", backgroundColor: "var(--color-maroon-dark)" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ border: "3px solid var(--color-navy)", backgroundColor: "var(--color-navy)" }}>
           {hobbies.map((hobby, i) => (
             <div
               key={i}
@@ -82,7 +82,7 @@ export default function Hobbies() {
               >
                 {hobby.title}
               </h3>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--color-maroon-dark)" }}>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--color-cream)", opacity: 0.8 }}>
                 {hobby.description}
               </p>
             </div>

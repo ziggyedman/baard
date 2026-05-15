@@ -1,11 +1,18 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-blue-electric: #1635FF;
-  --color-green-vivid: #3AC44F;
-  --color-orange-hot: #FF6B1A;
-  --color-maroon-dark: #2D1040;
+  --color-blue-electric: #2863A7;
+  --color-red-deep: #813539;
+  --color-gold: #EEC066;
+  --color-navy: #2A4563;
+  --color-coral: #ED5152;
   --color-cream: #F5EFE0;
+
+  /* legacy aliases used in components */
+  --color-blue-electric: #2863A7;
+  --color-green-vivid: #813539;
+  --color-orange-hot: #EEC066;
+  --color-maroon-dark: #2A4563;
 
   --font-bebas: "Bebas Neue", sans-serif;
   --font-inter: "Inter", sans-serif;
@@ -21,7 +28,7 @@ html {
 
 body {
   font-family: var(--font-inter);
-  background: var(--color-maroon-dark);
+  background: var(--color-navy);
   color: var(--color-cream);
   margin: 0;
   padding: 0;
@@ -31,16 +38,16 @@ body {
 /* 3D extruded text — matches the movie poster shadow style */
 .text-3d {
   text-shadow:
-    3px 3px 0 var(--color-maroon-dark),
-    6px 6px 0 var(--color-maroon-dark),
-    9px 9px 0 var(--color-maroon-dark),
-    12px 12px 0 #1a0828;
+    3px 3px 0 var(--color-navy),
+    6px 6px 0 var(--color-navy),
+    9px 9px 0 var(--color-navy),
+    12px 12px 0 #1a2d42;
 }
 
 .text-3d-sm {
   text-shadow:
-    2px 2px 0 var(--color-maroon-dark),
-    4px 4px 0 var(--color-maroon-dark);
+    2px 2px 0 var(--color-navy),
+    4px 4px 0 var(--color-navy);
 }
 
 /* Film grain overlay */
@@ -81,5 +88,5 @@ body {
 }
 .social-icon:hover {
   transform: translateY(-3px) scale(1.1);
-  filter: drop-shadow(0 0 8px var(--color-orange-hot));
+  filter: drop-shadow(0 0 8px var(--color-coral));
 }

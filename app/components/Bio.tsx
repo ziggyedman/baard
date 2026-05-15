@@ -9,7 +9,7 @@ export default function Bio() {
         {/* Label */}
         <p
           className="text-sm tracking-[0.4em] uppercase mb-2"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-maroon-dark)", opacity: 0.6 }}
+          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.6 }}
         >
           The Story So Far
         </p>
@@ -26,11 +26,11 @@ export default function Bio() {
           Act I — Bio
         </h2>
 
-        <hr className="section-rule mb-10" style={{ borderColor: "var(--color-maroon-dark)" }} />
+        <hr className="section-rule mb-10" style={{ borderColor: "var(--color-cream)" }} />
 
         <div
           className="space-y-6 text-lg md:text-xl leading-relaxed max-w-2xl"
-          style={{ color: "var(--color-maroon-dark)" }}
+          style={{ color: "var(--color-cream)", opacity: 0.9 }}
         >
           <p>
             Michael Vaz is a Portugal-based experienced Support Engineer that
@@ -55,7 +55,7 @@ export default function Bio() {
         {/* Decorative corner */}
         <div
           className="absolute bottom-8 right-8 md:bottom-12 md:right-12 opacity-20 text-right"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-maroon-dark)", fontSize: "6rem", lineHeight: 1 }}
+          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", fontSize: "6rem", lineHeight: 1 }}
         >
           I
         </div>
