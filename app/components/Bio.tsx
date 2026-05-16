@@ -33,22 +33,21 @@ export default function Bio() {
           style={{ color: "var(--color-cream)", opacity: 0.9 }}
         >
           <p>
-            Michael Vaz is a Portugal-based experienced Support Engineer that
-            turns complex technical problems into elegant solutions. Equal
-            parts engineer, troubleshooter, and people-person, he operates where deep technical
-            expertise meets calm under pressure.
+            I am a Portugal based Support Engineer who enjoys turning complex technical problems into clear,
+            workable solutions.
+            Part engineer, part troubleshooter, and naturally people focused, I do my best work where deep
+            technical knowledge meets calm, practical thinking.
+          <p>
+            My experience spans cybersecurity, enterprise messaging, cloud infrastructure,
+            and product support across companies like Atlassian, Loom, and Sophos.
+            I have worked across Canada, Netherlands, and Portugal, and I am often the person teams
+            rely on when things get complicated — whether it is a tough escalation, a system outage,
+            or simply making sense of something that feels overly complex.
           </p>
           <p>
-            His career spans cybersecurity, enterprise messaging, cloud infrastructure, and product
-            support engineering across companies like Atlassian, Loom, and Sophos — working across
-            Vancouver, the Netherlands, and Portugal. He&apos;s the person teams call when
-            escalations get hard, when systems go down at the worst possible time, and when someone
-            needs to translate complexity into clarity.
-          </p>
-          <p>
-            Certified MSCE, MCITP, and MCSA. Fluent in Portuguese, English, and the universal
-            language of a well-written post-mortem. Always building, always learning, always one
-            troubleshooting session away from a breakthrough.
+            I hold MSCE, MCITP, and MCSA certifications, and I am fluent in Portuguese, English, and the
+            universal language of a well written post mortem.
+            I am always learning, and always ready for the next challenge.
           </p>
         </div>
 
