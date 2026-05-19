@@ -37,6 +37,7 @@ export default function Bio() {
             workable solutions.
             Part engineer, part troubleshooter, and naturally people focused, I do my best work where deep
             technical knowledge meets calm, practical thinking.
+          </p>
           <p>
             My experience spans cybersecurity, enterprise messaging, cloud infrastructure,
             and product support across companies like Atlassian, Loom, and Sophos.
