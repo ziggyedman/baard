@@ -5,6 +5,7 @@ const credits = [
     period: "2024 — Present",
     description:
       "Handling the hardest problems at one of the world's leading software companies. Deep technical expertise across the Atlassian product suite, supporting enterprise customers at scale.",
+    link: "https://www.linkedin.com/in/michaelvaz/",
   },
   {
     role: "Tech Lead → Support Engineering",
@@ -90,6 +91,13 @@ export default function Career() {
                   <p className="text-sm md:text-base leading-relaxed" style={{ color: "var(--color-cream)", opacity: 0.8 }}>
                     {item.description}
                   </p>
+                  {item.link ? (
+                    <p className="mt-4 text-sm uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-bebas)", color: "var(--color-gold)", opacity: 0.9 }}>
+                      <a href={item.link} target="_blank" rel="noreferrer" className="underline transition-opacity hover:opacity-80">
+                        View current work experience on LinkedIn
+                      </a>
+                    </p>
+                  ) : null}
                 </div>
                 <div
                   className="text-sm tracking-widest uppercase whitespace-nowrap md:text-right md:pt-1"

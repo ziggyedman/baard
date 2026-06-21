@@ -39,11 +39,21 @@ export default function Bio() {
             technical knowledge meets calm, practical thinking.
           </p>
           <p>
+            Email was my first real deep-dive into tech — not writing messages, but running them.
+            Installing, configuring, and maintaining email servers taught me how communication depends on
+            reliable systems. That early passion for email still shows up in the work I do today.
+          </p>
+          <p>
             My experience spans cybersecurity, enterprise messaging, cloud infrastructure,
             and product support across companies like Atlassian, Loom, and Sophos.
             I have worked across Canada, Netherlands, and Portugal, and I am often the person teams
             rely on when things get complicated — whether it is a tough escalation, a system outage,
             or simply making sense of something that feels overly complex.
+          </p>
+          <p>
+            I joined Resend because the product feels easy to use and also has the depth to support real teams.
+            Helping people is what I keep coming back to, and I love doing that on platforms that are built
+            with both speed and human values in mind.
           </p>
           <p>
             I hold MSCE, MCITP, and MCSA certifications, and I am fluent in Portuguese, English, and the
