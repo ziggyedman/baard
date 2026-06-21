@@ -9,7 +9,7 @@ const hobbies = [
     emoji: "☕",
     title: "Coffee",
     description:
-      "A serious pursuit. From single-origin pour-overs to a perfectly pulled espresso — the ritual matters as much as the cup.",
+      "A serious pursuit. From single origin pour overs to a perfectly pulled espresso — the ritual matters as much as the cup.",
   },
   {
     emoji: "🛠️",
@@ -21,13 +21,19 @@ const hobbies = [
     emoji: "🎮",
     title: "Gaming",
     description:
-      "Strategy, story, and the occasional all-nighter. Games are the intersection of design, logic, and pure fun.",
+      "Strategy, story, and the occasional late night session. Games are the intersection of design, logic, and pure fun.",
   },
   {
     emoji: "🎵",
     title: "Music",
     description:
-      "From deep house to classic rock — the right track makes everything sharper. Always on, always loud.",
+      "From garage rock to classic rock — the right track makes everything sharper. Always on, always loud.",
+  },
+  {
+    emoji: "🏎️",
+    title: "Racing",
+    description:
+      "Engines, lap times, and the perfect line through a corner. Motorsport is where engineering meets nerve.",
   },
 ];
 

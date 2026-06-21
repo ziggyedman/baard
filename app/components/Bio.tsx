@@ -31,7 +31,7 @@ export default function Bio() {
             technical knowledge meets calm, practical thinking.
           </p>
           <p>
-            Email was my first real deep-dive into tech — not writing messages, but running them.
+            Email was my first real deep dive into tech — not writing messages, but running them.
             Installing, configuring, and maintaining email servers taught me how communication depends on
             reliable systems. That early passion for email still shows up in the work I do today.
           </p>

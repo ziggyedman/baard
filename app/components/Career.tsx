@@ -4,7 +4,7 @@ const credits = [
     company: "Resend",
     period: "2026 — Present",
     description:
-      "Joined Resend to bring email-first operations and people-focused support to a product I genuinely believe in. I help teams ship reliable messaging workflows while keeping the experience simple and fast.",
+      "Joined Resend to bring an email first mindset and people focused support to a product I genuinely believe in. I help teams ship reliable messaging workflows while keeping the experience simple and fast.",
     link: "https://resend.com/blog/welcoming-michael-vaz/",
   },
   {
@@ -41,7 +41,7 @@ const credits = [
     company: "Serviços Municipalizados de Aveiro",
     period: "2002 — 2010",
     description:
-      "Nearly eight years managing city-level IT infrastructure — network administration, system audits, messaging systems, security, and helpdesk. Where the foundation was built.",
+      "Nearly eight years managing citywide IT infrastructure — network administration, system audits, messaging systems, security, and helpdesk. Where the foundation was built.",
   },
 ];
 
