@@ -20,17 +20,16 @@ export default function Hero() {
       {/* Main title */}
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-4 text-center py-16">
         <h1
-          className="text-3d leading-[0.85] uppercase"
+          className="text-3d leading-[0.85] uppercase whitespace-nowrap"
           style={{
             fontFamily: "var(--font-bebas)",
             color: "var(--color-orange-hot)",
-            fontSize: "clamp(5rem, 18vw, 18rem)",
+            fontSize: "clamp(4rem, 14vw, 16rem)",
             letterSpacing: "-0.01em",
+            whiteSpace: "nowrap",
           }}
         >
-          Michael
-          <br />
-          Vaz
+          Michael Vaz
         </h1>
         <p
           className="mt-6 md:mt-8 tracking-[0.4em] uppercase"
