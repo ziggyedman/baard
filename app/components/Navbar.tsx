@@ -74,8 +74,8 @@ export default function Navbar() {
       />
 
       <div
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col grain w-[min(92vw,420px)] max-w-full transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
-        style={{ backgroundColor: "var(--color-navy)" }}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col grain w-[min(80vw,360px)] max-w-full transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        style={{ backgroundColor: "rgba(10, 18, 38, 0.92)", backdropFilter: "blur(16px)", borderRight: "1px solid rgba(255,255,255,0.08)" }}
       >
         <div className="flex items-center justify-between px-6 py-4">
           <Link
