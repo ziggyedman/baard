@@ -13,15 +13,17 @@ services:
         generateValue: true
       - key: DATABASE_PATH
         value: /opt/render/project/src/data/baard.db
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM_EMAIL
         sync: false
-      - key: RESEND_AUDIENCE_ID_1
-        sync: false
-      - key: RESEND_AUDIENCE_ID_2
-        sync: false
-      - key: RESEND_AUDIENCE_ID_3
+      - key: RESEND_BLOG_SEGMENT_ID
         sync: false
     disk:
       name: baard-data

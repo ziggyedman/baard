@@ -1,15 +1,26 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
 
-export default function LoginPage() {
+const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
+  google_auth_failed: "Google sign-in failed. Please try again.",
+  google_email_unverified: "Your Google email is not verified.",
+};
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const googleError = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const displayError =
+    error || (googleError ? GOOGLE_ERROR_MESSAGES[googleError] ?? "Google sign-in failed. Please try again." : "");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -61,6 +72,30 @@ export default function LoginPage() {
           Access your account
         </p>
 
+        <a
+          href="/api/auth/google"
+          className="flex items-center justify-center gap-3 px-6 py-3 text-sm transition-opacity hover:opacity-90"
+          style={{
+            backgroundColor: "var(--color-cream)",
+            color: "var(--color-navy)",
+            fontFamily: "var(--font-inter)",
+          }}
+        >
+          <FcGoogle size={20} />
+          Continue with Google
+        </a>
+
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(245,239,224,0.2)" }} />
+          <span
+            className="text-xs tracking-[0.2em] uppercase"
+            style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.4 }}
+          >
+            Or
+          </span>
+          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(245,239,224,0.2)" }} />
+        </div>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label
@@ -110,9 +145,9 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && (
+          {displayError && (
             <p className="text-sm" style={{ color: "var(--color-coral)" }}>
-              {error}
+              {displayError}
             </p>
           )}
 
@@ -149,5 +184,13 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

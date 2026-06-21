@@ -63,3 +63,14 @@ export function hashToken(token: string): string {
 export function generateResetToken(): string {
   return crypto.randomBytes(32).toString("hex");
 }
+
+export function isAdminEmail(email: string): boolean {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  return !!adminEmail && email.toLowerCase() === adminEmail.toLowerCase();
+}
+
+export async function requireAdminSession(): Promise<SessionPayload | null> {
+  const session = await getSession();
+  if (!session || !isAdminEmail(session.email)) return null;
+  return session;
+}

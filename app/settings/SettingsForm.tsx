@@ -2,27 +2,39 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { NEWSLETTERS } from "@/lib/email";
 
 interface Settings {
-  newsletter_1: boolean;
-  newsletter_2: boolean;
-  newsletter_3: boolean;
+  blog_subscribed: boolean;
   login_notifications: boolean;
 }
 
-interface Props {
-  newsletters: typeof NEWSLETTERS;
+function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={onChange}
+      className="mt-0.5 flex-shrink-0 w-10 h-6 rounded-full transition-colors duration-200 relative"
+      style={{ backgroundColor: checked ? "var(--color-coral)" : "rgba(245,239,224,0.15)" }}
+    >
+      <span
+        className="absolute top-1 w-4 h-4 rounded-full transition-transform duration-200"
+        style={{
+          backgroundColor: "var(--color-cream)",
+          left: checked ? "calc(100% - 1.25rem)" : "0.25rem",
+        }}
+      />
+    </button>
+  );
 }
 
-export default function SettingsForm({ newsletters }: Props) {
+export default function SettingsForm() {
   const router = useRouter();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [signingOut, setSigningOut] = useState(false);
-  const [sending, setSending] = useState<number | null>(null);
-  const [sendMessage, setSendMessage] = useState<{ index: number; text: string } | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/user/settings");
@@ -55,22 +67,6 @@ export default function SettingsForm({ newsletters }: Props) {
     setMessage("");
   }
 
-  async function sendMeCopy(index: number) {
-    setSending(index);
-    setSendMessage(null);
-    const res = await fetch("/api/newsletter/send-me", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newsletterIndex: index }),
-    });
-    setSending(null);
-    const data = await res.json();
-    setSendMessage({
-      index,
-      text: res.ok ? "Sent! Check your inbox." : (data.error ?? "Failed to send."),
-    });
-  }
-
   if (!settings) {
     return (
       <p className="text-sm" style={{ color: "var(--color-cream)", opacity: 0.5 }}>
@@ -79,8 +75,6 @@ export default function SettingsForm({ newsletters }: Props) {
     );
   }
 
-  const newsletterKeys: (keyof Settings)[] = ["newsletter_1", "newsletter_2", "newsletter_3"];
-
   return (
     <div className="flex flex-col gap-12">
       <section>
@@ -88,73 +82,22 @@ export default function SettingsForm({ newsletters }: Props) {
           className="uppercase leading-none mb-6"
           style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", fontSize: "1.75rem" }}
         >
-          Newsletters
+          Blog
         </h2>
-        <div className="flex flex-col gap-6">
-          {newsletters.map((nl, i) => {
-            const key = newsletterKeys[i];
-            const subscribed = settings[key];
-            return (
-              <div key={nl.id} className="flex flex-col gap-2">
-                <label className="flex items-start gap-4 cursor-pointer">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={subscribed}
-                    onClick={() => toggle(key)}
-                    className="mt-0.5 flex-shrink-0 w-10 h-6 rounded-full transition-colors duration-200 relative"
-                    style={{
-                      backgroundColor: subscribed ? "var(--color-coral)" : "rgba(245,239,224,0.15)",
-                    }}
-                  >
-                    <span
-                      className="absolute top-1 w-4 h-4 rounded-full transition-transform duration-200"
-                      style={{
-                        backgroundColor: "var(--color-cream)",
-                        left: subscribed ? "calc(100% - 1.25rem)" : "0.25rem",
-                      }}
-                    />
-                  </button>
-                  <div>
-                    <p
-                      className="uppercase leading-none"
-                      style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", fontSize: "1.1rem" }}
-                    >
-                      {nl.name}
-                    </p>
-                    <p className="text-xs mt-0.5" style={{ color: "var(--color-cream)", opacity: 0.5 }}>
-                      {subscribed ? "Subscribed" : "Unsubscribed"}
-                    </p>
-                  </div>
-                </label>
-
-                {subscribed && (
-                  <div className="ml-14 flex items-center gap-3">
-                    <button
-                      onClick={() => sendMeCopy(i)}
-                      disabled={sending === i}
-                      className="text-xs uppercase tracking-[0.15em] px-3 py-1.5 transition-opacity disabled:opacity-40"
-                      style={{
-                        fontFamily: "var(--font-bebas)",
-                        border: "1px solid rgba(245,239,224,0.25)",
-                        color: "var(--color-cream)",
-                        opacity: 0.7,
-                        fontSize: "0.75rem",
-                      }}
-                    >
-                      {sending === i ? "Sending…" : "Send me a copy"}
-                    </button>
-                    {sendMessage?.index === i && (
-                      <span className="text-xs" style={{ color: "var(--color-cream)", opacity: 0.6 }}>
-                        {sendMessage.text}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <label className="flex items-start gap-4 cursor-pointer">
+          <Toggle checked={settings.blog_subscribed} onChange={() => toggle("blog_subscribed")} />
+          <div>
+            <p
+              className="uppercase leading-none"
+              style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", fontSize: "1.1rem" }}
+            >
+              Blog Updates
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--color-cream)", opacity: 0.5 }}>
+              Get an email whenever a new post is published
+            </p>
+          </div>
+        </label>
       </section>
 
       <section>
@@ -165,24 +108,7 @@ export default function SettingsForm({ newsletters }: Props) {
           Notifications
         </h2>
         <label className="flex items-start gap-4 cursor-pointer">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={settings.login_notifications}
-            onClick={() => toggle("login_notifications")}
-            className="mt-0.5 flex-shrink-0 w-10 h-6 rounded-full transition-colors duration-200 relative"
-            style={{
-              backgroundColor: settings.login_notifications ? "var(--color-coral)" : "rgba(245,239,224,0.15)",
-            }}
-          >
-            <span
-              className="absolute top-1 w-4 h-4 rounded-full transition-transform duration-200"
-              style={{
-                backgroundColor: "var(--color-cream)",
-                left: settings.login_notifications ? "calc(100% - 1.25rem)" : "0.25rem",
-              }}
-            />
-          </button>
+          <Toggle checked={settings.login_notifications} onChange={() => toggle("login_notifications")} />
           <div>
             <p
               className="uppercase leading-none"

@@ -8,18 +8,6 @@ function getResend(): Resend {
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@baard.cc";
 
-const NEWSLETTERS = [
-  { id: 1, name: "Monthly Update", audienceEnvKey: "RESEND_AUDIENCE_ID_1" },
-  { id: 2, name: "Tech Notes", audienceEnvKey: "RESEND_AUDIENCE_ID_2" },
-  { id: 3, name: "Life & Travel", audienceEnvKey: "RESEND_AUDIENCE_ID_3" },
-] as const;
-
-export { NEWSLETTERS };
-
-function audienceId(envKey: string): string | undefined {
-  return process.env[envKey];
-}
-
 export async function sendPasswordResetEmail(email: string, token: string, baseUrl: string) {
   const url = `${baseUrl}/reset-password/confirm?token=${token}`;
   await getResend().emails.send({
@@ -83,64 +71,69 @@ export async function sendLoginNotificationEmail(
   }
 }
 
-export async function sendNewsletterToUser(
-  email: string,
-  newsletterIndex: 0 | 1 | 2
-) {
-  const newsletter = NEWSLETTERS[newsletterIndex];
-  const envKey = `RESEND_NEWSLETTER_TEMPLATE_ID_${newsletter.id}`;
-  const templateId = process.env[envKey];
-  if (!templateId) return;
-
-  await getResend().emails.send({
-    from: process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev",
-    to: email,
-    subject: newsletter.name,
-    template: {
-      id: templateId,
-      variables: {
-        email,
-        first_name: email.split("@")[0],
-        issue_month: new Date().toLocaleString("en-GB", { month: "long", year: "numeric" }),
-      },
-    },
-  });
+function blogSegmentId(): string | undefined {
+  return process.env.RESEND_BLOG_SEGMENT_ID;
 }
 
-export async function syncNewsletterSubscription(
-  email: string,
-  newsletterIndex: 0 | 1 | 2,
-  subscribe: boolean,
-  existingContactId: string | null
-): Promise<string | null> {
-  const newsletter = NEWSLETTERS[newsletterIndex];
-  const aId = audienceId(newsletter.audienceEnvKey);
-  if (!aId) return existingContactId;
+export async function subscribeToBlog(email: string): Promise<string | null> {
+  const segmentId = blogSegmentId();
+  const { data: existing } = await getResend().contacts.get({ email });
 
-  if (subscribe) {
-    if (existingContactId) {
-      await getResend().contacts.update({
-        audienceId: aId,
-        id: existingContactId,
-        unsubscribed: false,
-      });
-      return existingContactId;
-    } else {
-      const result = await getResend().contacts.create({
-        audienceId: aId,
-        email,
-        unsubscribed: false,
-      });
-      return (result.data as { id: string } | null)?.id ?? null;
+  if (existing) {
+    await getResend().contacts.update({ email, unsubscribed: false });
+    if (segmentId) {
+      await getResend().contacts.segments.add({ contactId: existing.id, segmentId });
     }
-  } else {
-    if (existingContactId) {
-      await getResend().contacts.update({
-        audienceId: aId,
-        id: existingContactId,
-        unsubscribed: true,
-      });
-    }
-    return existingContactId;
+    return existing.id;
   }
+
+  const { data: created, error } = await getResend().contacts.create({
+    email,
+    unsubscribed: false,
+    segments: segmentId ? [{ id: segmentId }] : undefined,
+  });
+  if (error) throw new Error(error.message);
+  return created?.id ?? null;
+}
+
+export async function unsubscribeFromBlog(email: string): Promise<void> {
+  const { data: existing } = await getResend().contacts.get({ email });
+  if (!existing) return;
+  await getResend().contacts.update({ email, unsubscribed: true });
+}
+
+export async function getBlogSubscriptionStatus(email: string): Promise<boolean> {
+  const { data } = await getResend().contacts.get({ email });
+  return !!data && !data.unsubscribed;
+}
+
+interface BlogPostSummary {
+  title: string;
+  excerpt: string;
+  slug: string;
+}
+
+export async function sendBlogBroadcast(post: BlogPostSummary, baseUrl: string): Promise<string> {
+  const segmentId = blogSegmentId();
+  if (!segmentId) throw new Error("RESEND_BLOG_SEGMENT_ID is not set");
+
+  const postUrl = `${baseUrl}/blog/${post.slug}`;
+  const { data, error } = await getResend().broadcasts.create({
+    name: `Blog: ${post.title}`,
+    from: FROM,
+    subject: post.title,
+    segmentId,
+    html: `
+      <h1>${post.title}</h1>
+      <p>${post.excerpt}</p>
+      <p><a href="${postUrl}">Read the full post</a></p>
+      <hr />
+      <p style="font-size:12px;color:#888;">
+        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe</a> from blog updates.
+      </p>
+    `,
+    send: true,
+  });
+  if (error) throw new Error(error.message);
+  return data!.id;
 }

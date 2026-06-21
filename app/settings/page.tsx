@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { NEWSLETTERS } from "@/lib/email";
 import SettingsForm from "./SettingsForm";
 
 export default async function SettingsPage() {
@@ -38,7 +37,7 @@ export default async function SettingsPage() {
 
         <hr className="section-rule mb-12" style={{ borderColor: "var(--color-cream)" }} />
 
-        <SettingsForm newsletters={NEWSLETTERS} />
+        <SettingsForm />
       </div>
     </main>
   );

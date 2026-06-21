@@ -1,12 +1,9 @@
 import { getSession } from "@/lib/auth";
 import { Resend } from "resend";
 import db from "@/lib/db";
-import { NEWSLETTERS } from "@/lib/email";
 
 interface SettingsRow {
-  newsletter_1: number;
-  newsletter_2: number;
-  newsletter_3: number;
+  blog_subscribed: number;
 }
 
 export async function GET() {
@@ -18,30 +15,19 @@ export async function GET() {
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL;
   const loginTemplateId = process.env.RESEND_LOGIN_TEMPLATE_ID;
-
-  const newsletterTemplateIds = NEWSLETTERS.map((nl) => ({
-    name: nl.name,
-    envKey: `RESEND_NEWSLETTER_TEMPLATE_ID_${nl.id}`,
-    value: process.env[`RESEND_NEWSLETTER_TEMPLATE_ID_${nl.id}`] ?? null,
-  }));
+  const blogSegmentId = process.env.RESEND_BLOG_SEGMENT_ID;
 
   const dbSettings = db
-    .prepare("SELECT newsletter_1, newsletter_2, newsletter_3 FROM user_settings WHERE user_id = ?")
+    .prepare("SELECT blog_subscribed FROM user_settings WHERE user_id = ?")
     .get(session.userId) as SettingsRow | undefined;
 
   const config = {
     RESEND_API_KEY: apiKey ? `set (starts with ${apiKey.slice(0, 6)}…)` : "NOT SET",
     RESEND_FROM_EMAIL: fromEmail ?? "NOT SET",
     RESEND_LOGIN_TEMPLATE_ID: loginTemplateId ?? "NOT SET",
-    newsletter_templates: newsletterTemplateIds.map((n) => ({
-      name: n.name,
-      env_key: n.envKey,
-      status: n.value ? `set (${n.value})` : "NOT SET",
-    })),
+    RESEND_BLOG_SEGMENT_ID: blogSegmentId ?? "NOT SET",
     db_subscriptions: {
-      newsletter_1: !!dbSettings?.newsletter_1,
-      newsletter_2: !!dbSettings?.newsletter_2,
-      newsletter_3: !!dbSettings?.newsletter_3,
+      blog_subscribed: !!dbSettings?.blog_subscribed,
     },
   };
 
@@ -86,26 +72,6 @@ export async function GET() {
     });
   }
 
-  const newsletterResults = await Promise.all(
-    newsletterTemplateIds.map(async (nl) => {
-      if (!nl.value) return { name: nl.name, result: "skipped — template ID not set" };
-      const r = await resend.emails.send({
-        from,
-        to: session.email,
-        subject: nl.name,
-        template: {
-          id: nl.value,
-          variables: {
-            email: session.email,
-            first_name: session.email.split("@")[0],
-            issue_month: now.toLocaleString("en-GB", { month: "long", year: "numeric" }),
-          },
-        },
-      });
-      return { name: nl.name, data: r.data, error: r.error };
-    })
-  );
-
   return Response.json({
     config,
     to: session.email,
@@ -113,6 +79,5 @@ export async function GET() {
     template_send: templateResult
       ? { data: templateResult.data, error: templateResult.error }
       : "skipped — RESEND_LOGIN_TEMPLATE_ID not set",
-    newsletter_sends: newsletterResults,
   });
 }

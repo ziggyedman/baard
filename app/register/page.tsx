@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -59,6 +60,30 @@ export default function RegisterPage() {
         >
           Join to manage your preferences
         </p>
+
+        <a
+          href="/api/auth/google"
+          className="flex items-center justify-center gap-3 px-6 py-3 text-sm transition-opacity hover:opacity-90"
+          style={{
+            backgroundColor: "var(--color-cream)",
+            color: "var(--color-navy)",
+            fontFamily: "var(--font-inter)",
+          }}
+        >
+          <FcGoogle size={20} />
+          Continue with Google
+        </a>
+
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(245,239,224,0.2)" }} />
+          <span
+            className="text-xs tracking-[0.2em] uppercase"
+            style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.4 }}
+          >
+            Or
+          </span>
+          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(245,239,224,0.2)" }} />
+        </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>

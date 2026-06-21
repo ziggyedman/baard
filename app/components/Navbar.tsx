@@ -10,6 +10,7 @@ const sections = [
   { label: "Bio", href: "/#bio" },
   { label: "Career", href: "/#career" },
   { label: "Special Features", href: "/#hobbies" },
+  { label: "Blog", href: "/blog" },
   { label: "Connect", href: "/#connect" },
 ];
 
@@ -18,13 +19,20 @@ export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.json())
-      .then((d) => setUserEmail(d.email ?? null))
-      .catch(() => setUserEmail(null));
+      .then((d) => {
+        setUserEmail(d.email ?? null);
+        setIsAdmin(!!d.isAdmin);
+      })
+      .catch(() => {
+        setUserEmail(null);
+        setIsAdmin(false);
+      });
   }, [pathname]);
 
   useEffect(() => {
@@ -116,6 +124,20 @@ export default function Navbar() {
           <div className="mt-8 pt-8" style={{ borderTop: "2px solid rgba(245,239,224,0.15)" }}>
             {userEmail ? (
               <div className="flex flex-col gap-3">
+                {isAdmin && (
+                  <Link
+                    href="/admin/posts"
+                    onClick={() => setOpen(false)}
+                    className="uppercase leading-none transition-opacity hover:opacity-70"
+                    style={{
+                      fontFamily: "var(--font-bebas)",
+                      color: "var(--color-gold)",
+                      fontSize: "clamp(1.5rem, 5vw, 2rem)",
+                    }}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <Link
                   href="/settings"
                   onClick={() => setOpen(false)}

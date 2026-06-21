@@ -90,3 +90,56 @@ body {
   transform: translateY(-3px) scale(1.1);
   filter: drop-shadow(0 0 8px var(--color-coral));
 }
+
+/* Blog post rich-text content — shared by the Tiptap editor and the public post page */
+.blog-content,
+.prose-blog-editor {
+  font-family: var(--font-inter);
+  line-height: 1.7;
+}
+.blog-content h2,
+.prose-blog-editor h2 {
+  font-family: var(--font-bebas);
+  text-transform: uppercase;
+  font-size: 1.75rem;
+  margin: 1.5em 0 0.5em;
+  color: var(--color-gold);
+}
+.blog-content h3,
+.prose-blog-editor h3 {
+  font-family: var(--font-bebas);
+  text-transform: uppercase;
+  font-size: 1.35rem;
+  margin: 1.25em 0 0.5em;
+  color: var(--color-gold);
+}
+.blog-content p,
+.prose-blog-editor p {
+  margin: 0 0 1em;
+}
+.blog-content ul,
+.blog-content ol,
+.prose-blog-editor ul,
+.prose-blog-editor ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+}
+.blog-content blockquote,
+.prose-blog-editor blockquote {
+  border-left: 3px solid var(--color-coral);
+  padding-left: 1em;
+  margin: 0 0 1em;
+  opacity: 0.85;
+  font-style: italic;
+}
+.blog-content a,
+.prose-blog-editor a {
+  color: var(--color-coral);
+  text-decoration: underline;
+}
+.blog-content img,
+.prose-blog-editor img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
