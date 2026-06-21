@@ -1,8 +1,16 @@
 const credits = [
   {
+    role: "Customer Success Engineer",
+    company: "Resend",
+    period: "2026 — Present",
+    description:
+      "Joined Resend to bring email-first operations and people-focused support to a product I genuinely believe in. I help teams ship reliable messaging workflows while keeping the experience simple and fast.",
+    link: "https://resend.com/blog/welcoming-michael-vaz/",
+  },
+  {
     role: "Principal Support Engineer",
     company: "Atlassian",
-    period: "2024 — Present",
+    period: "2024 — 2026",
     description:
       "Handling the hardest problems at one of the world's leading software companies. Deep technical expertise across the Atlassian product suite, supporting enterprise customers at scale.",
     link: "https://www.linkedin.com/in/michaelvaz/",
