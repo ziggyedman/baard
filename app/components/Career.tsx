@@ -53,24 +53,16 @@ export default function Career() {
       style={{ backgroundColor: "var(--color-blue-electric)" }}
     >
       <div className="max-w-4xl mx-auto">
-        {/* Label */}
-        <p
-          className="text-sm tracking-[0.4em] uppercase mb-2"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.5 }}
-        >
-          Act II
-        </p>
-
         {/* Heading */}
         <h2
-          className="text-3d-sm uppercase leading-none mb-10"
+          className="text-3d-sm uppercase leading-none mb-10 text-left"
           style={{
             fontFamily: "var(--font-bebas)",
             color: "var(--color-orange-hot)",
             fontSize: "clamp(3rem, 9vw, 7rem)",
           }}
         >
-          Professional Credits
+          Experience
         </h2>
 
         <hr className="section-rule mb-12" style={{ borderColor: "var(--color-cream)" }} />
