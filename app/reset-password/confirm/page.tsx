@@ -3,6 +3,7 @@
 import { useState, FormEvent, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { extractErrorMessage } from "@/lib/apiError";
 
 function ConfirmForm() {
   const router = useRouter();
@@ -17,17 +18,21 @@ function ConfirmForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const res = await fetch("/api/auth/reset-password/confirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, password }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      router.push("/login?reset=1");
-    } else {
-      const data = await res.json();
-      setError(data.error ?? "Reset failed");
+    try {
+      const res = await fetch("/api/auth/reset-password/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, password }),
+      });
+      if (res.ok) {
+        router.push("/login?reset=1");
+      } else {
+        setError(await extractErrorMessage(res, "Reset failed"));
+      }
+    } catch {
+      setError("Could not reach the server. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 

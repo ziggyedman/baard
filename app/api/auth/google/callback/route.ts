@@ -33,6 +33,15 @@ function redirectWithError(origin: string, error: string) {
 
 export async function GET(request: NextRequest) {
   const { origin } = request.nextUrl;
+  try {
+    return await handleCallback(request, origin);
+  } catch (err) {
+    console.error("[google-oauth] unexpected error", err);
+    return redirectWithError(origin, "google_auth_failed");
+  }
+}
+
+async function handleCallback(request: NextRequest, origin: string) {
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
   const cookieState = request.cookies.get("google_oauth_state")?.value;

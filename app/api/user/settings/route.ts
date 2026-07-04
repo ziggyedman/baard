@@ -52,7 +52,8 @@ export async function PUT(request: NextRequest) {
   if (blogSubscribed !== !!current.blog_subscribed) {
     try {
       await setBlogSubscription({ userId: session.userId, email: session.email, subscribed: blogSubscribed });
-    } catch {
+    } catch (err) {
+      console.error("[settings] failed to update blog subscription", err);
       return Response.json({ error: "Failed to update blog subscription" }, { status: 502 });
     }
   }

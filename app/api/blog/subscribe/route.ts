@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
 
   try {
     await setBlogSubscription({ userId: session?.userId, email, subscribed: true });
-  } catch {
+  } catch (err) {
+    console.error("[blog-subscribe] failed", err);
     return Response.json({ error: "Failed to subscribe" }, { status: 502 });
   }
 

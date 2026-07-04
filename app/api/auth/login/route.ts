@@ -15,41 +15,46 @@ interface SettingsRow {
 }
 
 export async function POST(request: NextRequest) {
-  const { email, password } = await request.json();
+  try {
+    const { email, password } = await request.json();
 
-  if (!email || !password) {
-    return Response.json({ error: "Email and password are required" }, { status: 400 });
+    if (!email || !password) {
+      return Response.json({ error: "Email and password are required" }, { status: 400 });
+    }
+
+    const user = db.prepare("SELECT id, email, password_hash FROM users WHERE email = ?").get(
+      email.toLowerCase()
+    ) as UserRow | undefined;
+
+    const valid = user ? await bcrypt.compare(password, user.password_hash) : false;
+
+    if (!user || !valid) {
+      return Response.json({ error: "Invalid email or password" }, { status: 401 });
+    }
+
+    const token = await signToken({ userId: user.id, email: user.email });
+    await setSessionCookie(token);
+
+    const settings = db
+      .prepare("SELECT login_notifications FROM user_settings WHERE user_id = ?")
+      .get(user.id) as SettingsRow | undefined;
+
+    if (settings?.login_notifications) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+        request.headers.get("x-real-ip") ??
+        "Unknown";
+      const userAgent = request.headers.get("user-agent") ?? "Unknown";
+      sendLoginNotificationEmail(user.email, {
+        ip,
+        userAgent,
+        baseUrl: request.nextUrl.origin,
+      }).catch((err) => console.error("[login] notification email failed", err));
+    }
+
+    return Response.json({ ok: true });
+  } catch (err) {
+    console.error("[login] unexpected error", err);
+    return Response.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
-
-  const user = db.prepare("SELECT id, email, password_hash FROM users WHERE email = ?").get(
-    email.toLowerCase()
-  ) as UserRow | undefined;
-
-  const valid = user ? await bcrypt.compare(password, user.password_hash) : false;
-
-  if (!user || !valid) {
-    return Response.json({ error: "Invalid email or password" }, { status: 401 });
-  }
-
-  const token = await signToken({ userId: user.id, email: user.email });
-  await setSessionCookie(token);
-
-  const settings = db
-    .prepare("SELECT login_notifications FROM user_settings WHERE user_id = ?")
-    .get(user.id) as SettingsRow | undefined;
-
-  if (settings?.login_notifications) {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      request.headers.get("x-real-ip") ??
-      "Unknown";
-    const userAgent = request.headers.get("user-agent") ?? "Unknown";
-    sendLoginNotificationEmail(user.email, {
-      ip,
-      userAgent,
-      baseUrl: request.nextUrl.origin,
-    }).catch((err) => console.error("[login] notification email failed", err));
-  }
-
-  return Response.json({ ok: true });
 }

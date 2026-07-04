@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
 
   try {
     await setBlogSubscription({ userId: session?.userId, email, subscribed: false });
-  } catch {
+  } catch (err) {
+    console.error("[blog-unsubscribe] failed", err);
     return Response.json({ error: "Failed to unsubscribe" }, { status: 502 });
   }
 
