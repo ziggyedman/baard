@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import db from "@/lib/db";
 import { signToken, setSessionCookie } from "@/lib/auth";
 import { sendLoginNotificationEmail } from "@/lib/email";
+import { getAppUrl } from "@/lib/url";
 
 interface UserRow {
   id: number;
@@ -32,7 +33,7 @@ function redirectWithError(origin: string, error: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const { origin } = request.nextUrl;
+  const origin = getAppUrl(request);
   try {
     return await handleCallback(request, origin);
   } catch (err) {

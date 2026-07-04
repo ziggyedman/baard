@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import db from "@/lib/db";
 import { hashToken, generateResetToken } from "@/lib/auth";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { getAppUrl } from "@/lib/url";
 
 interface UserRow {
   id: number;
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
       "INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)"
     ).run(user.id, tokenHash, expiresAt);
 
-    const baseUrl = request.nextUrl.origin;
+    const baseUrl = getAppUrl(request);
     await sendPasswordResetEmail(email.toLowerCase(), token, baseUrl).catch((err) =>
       console.error("[reset-password] failed to send email", err)
     );

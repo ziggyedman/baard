@@ -11,6 +11,8 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
+      - key: APP_URL
+        sync: false
       - key: DATABASE_PATH
         value: /opt/render/project/src/data/baard.db
       - key: ADMIN_EMAIL

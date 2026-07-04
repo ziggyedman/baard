@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { getAppUrl } from "@/lib/url";
 
 export async function GET(request: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
+  const appUrl = getAppUrl(request);
   if (!clientId) {
     console.error("[google-oauth] GOOGLE_CLIENT_ID is not set");
-    const url = new URL("/login", request.nextUrl.origin);
+    const url = new URL("/login", appUrl);
     url.searchParams.set("error", "google_not_configured");
     return NextResponse.redirect(url);
   }
 
   const state = crypto.randomBytes(16).toString("hex");
-  const redirectUri = `${request.nextUrl.origin}/api/auth/google/callback`;
+  const redirectUri = `${appUrl}/api/auth/google/callback`;
 
   const params = new URLSearchParams({
     client_id: clientId,

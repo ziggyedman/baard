@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import db from "@/lib/db";
 import { requireAdminSession } from "@/lib/auth";
 import { sendBlogBroadcast } from "@/lib/email";
+import { getAppUrl } from "@/lib/url";
 import type { PostRow } from "../../route";
 
 interface Params {
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   let broadcastId: string;
   try {
-    broadcastId = await sendBlogBroadcast(post, request.nextUrl.origin);
+    broadcastId = await sendBlogBroadcast(post, getAppUrl(request));
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to send broadcast";
     return Response.json({ error: message }, { status: 502 });

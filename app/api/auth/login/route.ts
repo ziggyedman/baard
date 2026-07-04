@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import db from "@/lib/db";
 import { signToken, setSessionCookie } from "@/lib/auth";
 import { sendLoginNotificationEmail } from "@/lib/email";
+import { getAppUrl } from "@/lib/url";
 
 interface UserRow {
   id: number;
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
       sendLoginNotificationEmail(user.email, {
         ip,
         userAgent,
-        baseUrl: request.nextUrl.origin,
+        baseUrl: getAppUrl(request),
       }).catch((err) => console.error("[login] notification email failed", err));
     }
 
