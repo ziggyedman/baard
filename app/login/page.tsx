@@ -8,6 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
   google_auth_failed: "Google sign-in failed. Please try again.",
   google_email_unverified: "Your Google email is not verified.",
+  google_not_configured: "Google sign-in is not configured on this server.",
 };
 
 function LoginForm() {

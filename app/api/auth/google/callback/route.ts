@@ -38,12 +38,18 @@ export async function GET(request: NextRequest) {
   const cookieState = request.cookies.get("google_oauth_state")?.value;
 
   if (!code || !state || !cookieState || state !== cookieState) {
+    console.error("[google-oauth] callback missing/mismatched state", {
+      hasCode: !!code,
+      hasState: !!state,
+      hasCookieState: !!cookieState,
+    });
     return redirectWithError(origin, "google_auth_failed");
   }
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
+    console.error("[google-oauth] GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is not set");
     return redirectWithError(origin, "google_auth_failed");
   }
 
@@ -60,6 +66,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!tokenRes.ok) {
+    console.error("[google-oauth] token exchange failed", tokenRes.status, await tokenRes.text());
     return redirectWithError(origin, "google_auth_failed");
   }
 
@@ -70,6 +77,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!userInfoRes.ok) {
+    console.error("[google-oauth] userinfo fetch failed", userInfoRes.status, await userInfoRes.text());
     return redirectWithError(origin, "google_auth_failed");
   }
 
@@ -114,7 +122,9 @@ export async function GET(request: NextRequest) {
         request.headers.get("x-real-ip") ??
         "Unknown";
       const userAgent = request.headers.get("user-agent") ?? "Unknown";
-      sendLoginNotificationEmail(user.email, { ip, userAgent, baseUrl: origin }).catch(() => {});
+      sendLoginNotificationEmail(user.email, { ip, userAgent, baseUrl: origin }).catch((err) =>
+        console.error("[google-oauth] login notification email failed", err)
+      );
     }
   }
 

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       ip,
       userAgent,
       baseUrl: request.nextUrl.origin,
-    }).catch(() => {});
+    }).catch((err) => console.error("[login] notification email failed", err));
   }
 
   return Response.json({ ok: true });

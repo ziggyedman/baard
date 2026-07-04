@@ -4,7 +4,10 @@ import crypto from "crypto";
 export async function GET(request: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) {
-    return Response.json({ error: "Google login is not configured" }, { status: 500 });
+    console.error("[google-oauth] GOOGLE_CLIENT_ID is not set");
+    const url = new URL("/login", request.nextUrl.origin);
+    url.searchParams.set("error", "google_not_configured");
+    return NextResponse.redirect(url);
   }
 
   const state = crypto.randomBytes(16).toString("hex");

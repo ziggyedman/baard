@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth";
+import { requireAdminSession } from "@/lib/auth";
 import { Resend } from "resend";
 import db from "@/lib/db";
 
@@ -7,7 +7,7 @@ interface SettingsRow {
 }
 
 export async function GET() {
-  const session = await getSession();
+  const session = await requireAdminSession();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }

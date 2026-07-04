@@ -28,7 +28,9 @@ export async function POST(request: NextRequest) {
     ).run(user.id, tokenHash, expiresAt);
 
     const baseUrl = request.nextUrl.origin;
-    await sendPasswordResetEmail(email.toLowerCase(), token, baseUrl).catch(() => {});
+    await sendPasswordResetEmail(email.toLowerCase(), token, baseUrl).catch((err) =>
+      console.error("[reset-password] failed to send email", err)
+    );
   }
 
   return Response.json({ ok: true });

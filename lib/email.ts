@@ -8,19 +8,55 @@ function getResend(): Resend {
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@baard.cc";
 
+function parseUserAgent(userAgent: string): string {
+  let os = "an unknown OS";
+  if (/Windows/.test(userAgent)) os = "Windows";
+  else if (/iPhone|iPad|iPod/.test(userAgent)) os = "iOS";
+  else if (/Mac OS X/.test(userAgent)) os = "macOS";
+  else if (/Android/.test(userAgent)) os = "Android";
+  else if (/Linux/.test(userAgent)) os = "Linux";
+
+  let browser = "an unknown browser";
+  if (/Edg\//.test(userAgent)) browser = "Edge";
+  else if (/Chrome\//.test(userAgent) && !/Chromium/.test(userAgent)) browser = "Chrome";
+  else if (/Firefox\//.test(userAgent)) browser = "Firefox";
+  else if (/Safari\//.test(userAgent) && !/Chrome/.test(userAgent)) browser = "Safari";
+
+  return `${browser} on ${os}`;
+}
+
 export async function sendPasswordResetEmail(email: string, token: string, baseUrl: string) {
   const url = `${baseUrl}/reset-password/confirm?token=${token}`;
-  await getResend().emails.send({
-    from: FROM,
-    to: email,
-    subject: "Reset your baard.cc password",
-    html: `
-      <p>Hi,</p>
-      <p>You requested a password reset for your baard.cc account.</p>
-      <p><a href="${url}">Click here to reset your password</a></p>
-      <p>This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
-    `,
-  });
+  const templateId = process.env.RESEND_RESET_PASSWORD_TEMPLATE_ID;
+  const firstName = email.split("@")[0];
+
+  if (templateId) {
+    await getResend().emails.send({
+      to: email,
+      template: {
+        id: templateId,
+        variables: {
+          first_name: firstName,
+          reset_url: url,
+          support_url: `${baseUrl}/#connect`,
+          company_name: "baard.cc",
+          company_address: process.env.COMPANY_ADDRESS ?? "",
+        },
+      },
+    });
+  } else {
+    await getResend().emails.send({
+      from: FROM,
+      to: email,
+      subject: "Reset your baard.cc password",
+      html: `
+        <p>Hi,</p>
+        <p>You requested a password reset for your baard.cc account.</p>
+        <p><a href="${url}">Click here to reset your password</a></p>
+        <p>This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
+      `,
+    });
+  }
 }
 
 interface LoginNotificationContext {
@@ -43,7 +79,7 @@ export async function sendLoginNotificationEmail(
 
   if (templateId) {
     await getResend().emails.send({
-      from: process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev",
+      from: FROM,
       to: email,
       subject: "New sign-in to baard.cc",
       template: {
@@ -51,7 +87,7 @@ export async function sendLoginNotificationEmail(
         variables: {
           app_name: "baard.cc",
           company_address: process.env.COMPANY_ADDRESS ?? "",
-          device: ctx.userAgent,
+          device: parseUserAgent(ctx.userAgent),
           first_name: firstName,
           ip_address: ctx.ip,
           location: "Unknown",
