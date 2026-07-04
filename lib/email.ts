@@ -7,6 +7,7 @@ function getResend(): Resend {
 }
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@baard.cc";
+const LOGIN_TEMPLATE_ID = process.env.RESEND_LOGIN_TEMPLATE_ID || "479b0abc-75b6-4eee-8852-5f2a1bb901a8";
 
 function parseUserAgent(userAgent: string): string {
   let os = "an unknown OS";
@@ -69,7 +70,6 @@ export async function sendLoginNotificationEmail(
   email: string,
   ctx: LoginNotificationContext
 ) {
-  const templateId = process.env.RESEND_LOGIN_TEMPLATE_ID;
   const now = new Date();
   const firstName = email.split("@")[0];
   const signInTime = now.toLocaleString("en-GB", {
@@ -77,34 +77,25 @@ export async function sendLoginNotificationEmail(
     hour: "2-digit", minute: "2-digit", timeZoneName: "short",
   });
 
-  if (templateId) {
-    await getResend().emails.send({
-      from: FROM,
-      to: email,
-      subject: "New sign-in to baard.cc",
-      template: {
-        id: templateId,
-        variables: {
-          app_name: "baard.cc",
-          company_address: process.env.COMPANY_ADDRESS ?? "",
-          device: parseUserAgent(ctx.userAgent),
-          first_name: firstName,
-          ip_address: ctx.ip,
-          location: "Unknown",
-          secure_account_url: `${ctx.baseUrl}/settings`,
-          sign_in_time: signInTime,
-          support_url: `${ctx.baseUrl}/#connect`,
-        },
+  await getResend().emails.send({
+    from: FROM,
+    to: email,
+    subject: "New sign-in to baard.cc",
+    template: {
+      id: LOGIN_TEMPLATE_ID,
+      variables: {
+        app_name: "baard.cc",
+        company_address: process.env.COMPANY_ADDRESS ?? "",
+        device: parseUserAgent(ctx.userAgent),
+        first_name: firstName,
+        ip_address: ctx.ip,
+        location: "Unknown",
+        secure_account_url: `${ctx.baseUrl}/settings`,
+        sign_in_time: signInTime,
+        support_url: `${ctx.baseUrl}/#connect`,
       },
-    });
-  } else {
-    await getResend().emails.send({
-      from: FROM,
-      to: email,
-      subject: "New sign-in to baard.cc",
-      html: `<p>A new sign-in to your baard.cc account was detected at ${signInTime} from ${ctx.ip}. If this wasn't you, reset your password immediately.</p>`,
-    });
-  }
+    },
+  });
 }
 
 function blogSegmentId(): string | undefined {
