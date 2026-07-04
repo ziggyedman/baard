@@ -38,13 +38,22 @@ export default async function AdminPostsPage() {
           >
             Posts
           </h1>
-          <Link
-            href="/admin/posts/new"
-            className="px-5 py-2.5 uppercase tracking-[0.15em] text-sm"
-            style={{ fontFamily: "var(--font-bebas)", backgroundColor: "var(--color-coral)", color: "var(--color-cream)" }}
-          >
-            New Post
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/newsletter"
+              className="px-5 py-2.5 uppercase tracking-[0.15em] text-sm"
+              style={{ fontFamily: "var(--font-bebas)", border: "2px solid rgba(245,239,224,0.25)", color: "var(--color-cream)" }}
+            >
+              Newsletter
+            </Link>
+            <Link
+              href="/admin/posts/new"
+              className="px-5 py-2.5 uppercase tracking-[0.15em] text-sm"
+              style={{ fontFamily: "var(--font-bebas)", backgroundColor: "var(--color-coral)", color: "var(--color-cream)" }}
+            >
+              New Post
+            </Link>
+          </div>
         </div>
 
         <hr className="section-rule mb-10" style={{ borderColor: "var(--color-cream)" }} />

@@ -48,6 +48,15 @@ db.exec(`
     broadcast_id TEXT,
     broadcast_sent_at INTEGER
   );
+
+  CREATE TABLE IF NOT EXISTS newsletter_issues (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject TEXT NOT NULL,
+    content_html TEXT NOT NULL,
+    created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+    broadcast_id TEXT,
+    sent_at INTEGER
+  );
 `);
 
 // Schema migrations below run from every process that imports this module (including

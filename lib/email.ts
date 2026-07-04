@@ -173,3 +173,25 @@ export async function sendBlogBroadcast(post: BlogPostSummary, baseUrl: string):
   if (error) throw new Error(error.message);
   return data!.id;
 }
+
+export async function sendNewsletterBroadcast(subject: string, contentHtml: string): Promise<string> {
+  const segmentId = blogSegmentId();
+  if (!segmentId) throw new Error("RESEND_BLOG_SEGMENT_ID is not set");
+
+  const { data, error } = await getResend().broadcasts.create({
+    name: `Newsletter: ${subject}`,
+    from: FROM,
+    subject,
+    segmentId,
+    html: `
+      ${contentHtml}
+      <hr />
+      <p style="font-size:12px;color:#888;">
+        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe</a> from the newsletter.
+      </p>
+    `,
+    send: true,
+  });
+  if (error) throw new Error(error.message);
+  return data!.id;
+}
