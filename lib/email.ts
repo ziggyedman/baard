@@ -7,7 +7,36 @@ function getResend(): Resend {
 }
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@baard.cc";
-const LOGIN_TEMPLATE_ID = process.env.RESEND_LOGIN_TEMPLATE_ID || "479b0abc-75b6-4eee-8852-5f2a1bb901a8";
+const LOGIN_TEMPLATE_ID = process.env.RESEND_LOGIN_TEMPLATE_ID || "a1dc3d9d-6644-4215-ae4c-22383532a4e8";
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Resend's Broadcasts API takes raw html/text/react — it has no `template.id` option like
+// emails.send() does. To still author broadcast content as a reusable dashboard template,
+// fetch the template's html and fill in our own {{{placeholders}}}. Placeholders we don't
+// know about (e.g. {{{RESEND_UNSUBSCRIBE_URL}}}, contact properties) are left untouched so
+// Resend can resolve them per-recipient when the broadcast actually sends.
+async function renderBroadcastTemplate(
+  templateId: string,
+  vars: Record<string, string>
+): Promise<string> {
+  const { data, error } = await getResend().templates.get(templateId);
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error(`Resend template ${templateId} not found`);
+
+  let html = data.html;
+  for (const [key, value] of Object.entries(vars)) {
+    html = html.replaceAll(`{{{${key}}}}`, value);
+  }
+  return html;
+}
 
 function parseUserAgent(userAgent: string): string {
   let os = "an unknown OS";
@@ -27,37 +56,25 @@ function parseUserAgent(userAgent: string): string {
 }
 
 export async function sendPasswordResetEmail(email: string, token: string, baseUrl: string) {
-  const url = `${baseUrl}/reset-password/confirm?token=${token}`;
   const templateId = process.env.RESEND_RESET_PASSWORD_TEMPLATE_ID;
+  if (!templateId) throw new Error("RESEND_RESET_PASSWORD_TEMPLATE_ID is not set");
+
+  const url = `${baseUrl}/reset-password/confirm?token=${token}`;
   const firstName = email.split("@")[0];
 
-  if (templateId) {
-    await getResend().emails.send({
-      to: email,
-      template: {
-        id: templateId,
-        variables: {
-          first_name: firstName,
-          reset_url: url,
-          support_url: `${baseUrl}/#connect`,
-          company_name: "baard.cc",
-          company_address: process.env.COMPANY_ADDRESS ?? "",
-        },
+  await getResend().emails.send({
+    to: email,
+    template: {
+      id: templateId,
+      variables: {
+        first_name: firstName,
+        reset_url: url,
+        support_url: `${baseUrl}/#connect`,
+        company_name: "baard.cc",
+        company_address: process.env.COMPANY_ADDRESS ?? "",
       },
-    });
-  } else {
-    await getResend().emails.send({
-      from: FROM,
-      to: email,
-      subject: "Reset your baard.cc password",
-      html: `
-        <p>Hi,</p>
-        <p>You requested a password reset for your baard.cc account.</p>
-        <p><a href="${url}">Click here to reset your password</a></p>
-        <p>This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
-      `,
-    });
-  }
+    },
+  });
 }
 
 interface LoginNotificationContext {
@@ -143,22 +160,21 @@ interface BlogPostSummary {
 export async function sendBlogBroadcast(post: BlogPostSummary, baseUrl: string): Promise<string> {
   const segmentId = blogSegmentId();
   if (!segmentId) throw new Error("RESEND_BLOG_SEGMENT_ID is not set");
+  const templateId = process.env.RESEND_BLOG_POST_TEMPLATE_ID;
+  if (!templateId) throw new Error("RESEND_BLOG_POST_TEMPLATE_ID is not set");
 
-  const postUrl = `${baseUrl}/blog/${post.slug}`;
+  const html = await renderBroadcastTemplate(templateId, {
+    post_title: escapeHtml(post.title),
+    post_excerpt: escapeHtml(post.excerpt),
+    post_url: `${baseUrl}/blog/${post.slug}`,
+  });
+
   const { data, error } = await getResend().broadcasts.create({
     name: `Blog: ${post.title}`,
     from: FROM,
     subject: post.title,
     segmentId,
-    html: `
-      <h1>${post.title}</h1>
-      <p>${post.excerpt}</p>
-      <p><a href="${postUrl}">Read the full post</a></p>
-      <hr />
-      <p style="font-size:12px;color:#888;">
-        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe</a> from blog updates.
-      </p>
-    `,
+    html,
     send: true,
   });
   if (error) throw new Error(error.message);
@@ -168,19 +184,20 @@ export async function sendBlogBroadcast(post: BlogPostSummary, baseUrl: string):
 export async function sendNewsletterBroadcast(subject: string, contentHtml: string): Promise<string> {
   const segmentId = blogSegmentId();
   if (!segmentId) throw new Error("RESEND_BLOG_SEGMENT_ID is not set");
+  const templateId = process.env.RESEND_NEWSLETTER_TEMPLATE_ID;
+  if (!templateId) throw new Error("RESEND_NEWSLETTER_TEMPLATE_ID is not set");
+
+  const html = await renderBroadcastTemplate(templateId, {
+    newsletter_subject: escapeHtml(subject),
+    newsletter_content: contentHtml,
+  });
 
   const { data, error } = await getResend().broadcasts.create({
     name: `Newsletter: ${subject}`,
     from: FROM,
     subject,
     segmentId,
-    html: `
-      ${contentHtml}
-      <hr />
-      <p style="font-size:12px;color:#888;">
-        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe</a> from the newsletter.
-      </p>
-    `,
+    html,
     send: true,
   });
   if (error) throw new Error(error.message);
