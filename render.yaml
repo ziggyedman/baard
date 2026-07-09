@@ -29,6 +29,10 @@ services:
         sync: false
       - key: RESEND_RESET_PASSWORD_TEMPLATE_ID
         sync: false
+      - key: RESEND_BLOG_POST_TEMPLATE_ID
+        sync: false
+      - key: RESEND_NEWSLETTER_TEMPLATE_ID
+        sync: false
       - key: COMPANY_ADDRESS
         sync: false
       - key: RESEND_BLOG_SEGMENT_ID
