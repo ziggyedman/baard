@@ -60,8 +60,7 @@ export default function Connect() {
         <div className="mt-16 pt-8 border-t text-xs" style={{ borderColor: "var(--color-panel-border)" }}>
           <div className="dim">
             ▶ <span className="hl-green">system status: operational</span> · support_responsive{" "}
-            <span className="hl-green">✓</span> · © MMXXVI <span className="hl-amber">baard studios</span> ·
-            no animals were harmed in the making of this website
+            <span className="hl-green">✓</span> · © MMXXVI <span className="hl-amber">baard studios</span>
           </div>
         </div>
       </div>
