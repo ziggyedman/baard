@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design 1 — Swiss Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Inter',sans-serif;
+    background:#faf9f7;
+    color:#111;
+    line-height:1.6;
+  }
+  .badge {
+    position:fixed; top:20px; right:20px; z-index:99;
+    background:#111; color:#fff; font-size:11px; letter-spacing:2px;
+    padding:8px 14px; text-transform:uppercase; font-weight:600;
+  }
+  nav {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:28px 60px; border-bottom:1px solid #111;
+  }
+  .logo { font-weight:900; font-size:20px; letter-spacing:-0.02em; }
+  .nav-links { display:flex; gap:36px; font-size:13px; font-weight:500; }
+  .nav-links a { color:#111; text-decoration:none; text-transform:uppercase; letter-spacing:1px; }
+  .nav-links a:hover { opacity:.6; }
+  header {
+    padding:120px 60px 100px;
+    border-bottom:1px solid #111;
+  }
+  .eyebrow {
+    font-size:12px; text-transform:uppercase; letter-spacing:3px;
+    font-weight:600; margin-bottom:32px;
+    display:inline-block; padding:6px 14px; border:1px solid #111; border-radius:999px;
+  }
+  h1 {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(56px, 10vw, 140px);
+    font-weight:900; line-height:.95; letter-spacing:-0.02em;
+    max-width:14ch;
+  }
+  h1 em { font-style:italic; font-weight:400; }
+  .hero-meta {
+    margin-top:56px; display:flex; gap:80px;
+  }
+  .hero-meta div { max-width:280px; }
+  .hero-meta .label { font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#777; margin-bottom:8px; }
+  .hero-meta .val { font-size:15px; font-weight:500; }
+  section { padding:100px 60px; border-bottom:1px solid #111; display:grid; grid-template-columns:280px 1fr; gap:60px; }
+  .sec-label { font-size:12px; text-transform:uppercase; letter-spacing:3px; font-weight:700; padding-top:6px; }
+  .sec-label .num { color:#999; margin-right:8px; }
+  h2 {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(32px,4vw,52px); font-weight:700; line-height:1.1; margin-bottom:36px; letter-spacing:-0.01em;
+  }
+  .bio-copy { font-size:19px; line-height:1.75; color:#333; max-width:62ch; }
+  .bio-copy p + p { margin-top:24px; }
+  .certs { margin-top:40px; display:flex; gap:10px; flex-wrap:wrap; }
+  .certs span { border:1px solid #111; padding:8px 16px; font-size:12px; font-weight:600; border-radius:999px; }
+  .timeline { }
+  .job {
+    display:grid; grid-template-columns:180px 1fr auto; gap:40px;
+    padding:36px 0; border-bottom:1px solid #ddd;
+    transition:background .2s;
+  }
+  .job:hover { background:#111; color:#fff; margin:0 -24px; padding:36px 24px; }
+  .job:hover .years { color:rgba(255,255,255,.6); }
+  .years { font-size:13px; color:#777; font-weight:500; }
+  .role { font-size:24px; font-weight:700; letter-spacing:-0.01em; }
+  .company { font-size:14px; color:#666; margin-top:4px; font-style:italic; font-family:'Playfair Display',serif; }
+  .job p.desc { margin-top:14px; font-size:15px; max-width:58ch; color:inherit; opacity:.85; }
+  .arrow { font-size:22px; }
+  .hobby-grid { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #111; }
+  .hobby {
+    padding:32px 28px; border-right:1px solid #111; border-bottom:1px solid #111;
+    transition:background .2s;
+  }
+  .hobby:hover { background:#111; color:#fff; }
+  .hobby .emoji { font-size:28px; }
+  .hobby h3 { font-size:15px; font-weight:700; margin:16px 0 8px; text-transform:uppercase; letter-spacing:1px; }
+  .hobby p { font-size:13.5px; opacity:.7; line-height:1.6; }
+  footer { padding:100px 60px 60px; }
+  .footer-links { display:grid; grid-template-columns:repeat(5,1fr); gap:20px; border-top:1px solid #111; padding-top:48px; }
+  .footer-links a { color:#111; text-decoration:none; font-size:14px; font-weight:600; padding:14px; border:1px solid #ddd; text-align:center; transition:all .2s; }
+  .footer-links a:hover { background:#111; color:#fff; }
+  .footer-bottom { margin-top:64px; display:flex; justify-content:space-between; font-size:11px; color:#999; text-transform:uppercase; letter-spacing:2px; }
+  @media(max-width:900px){
+    nav, header, section, footer { padding-left:24px; padding-right:24px; }
+    section { grid-template-columns:1fr; gap:24px; }
+    .job { grid-template-columns:1fr; gap:8px; }
+    .hobby-grid { grid-template-columns:1fr; }
+    .footer-links { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="badge">Concept 01 · Swiss Editorial</div>
+
+<nav>
+  <div class="logo">MV.</div>
+  <div class="nav-links">
+    <a href="#">About</a><a href="#">Career</a><a href="#">Blog</a><a href="#">Connect</a>
+  </div>
+</nav>
+
+<header>
+  <span class="eyebrow">Support Engineer — Lisbon, PT</span>
+  <h1>Michael <em>Vaz</em> builds calm out of chaos.</h1>
+  <div class="hero-meta">
+    <div>
+      <div class="label">Currently</div>
+      <div class="val">Customer Success Engineer @ Resend</div>
+    </div>
+    <div>
+      <div class="label">Prev. at</div>
+      <div class="val">Atlassian · Loom · Sophos</div>
+    </div>
+    <div>
+      <div class="label">Specialty</div>
+      <div class="val">Email infrastructure &amp; escalations</div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-label"><span class="num">01</span>About</div>
+  <div>
+    <h2>Where deep technical knowledge meets calm, practical thinking.</h2>
+    <div class="bio-copy">
+      <p>Portugal-based Support Engineer who enjoys turning complex technical problems into clear, workable solutions. Part engineer, part troubleshooter, and naturally people focused.</p>
+      <p>Email was my first real deep dive into tech — not writing messages, but running them. Installing, configuring, and maintaining email servers taught me how communication depends on reliable systems.</p>
+    </div>
+    <div class="certs"><span>MSCE</span><span>MCITP</span><span>MCSA</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-label"><span class="num">02</span>Career</div>
+  <div class="timeline">
+    <div class="job">
+      <div class="years">2026 — Now</div>
+      <div><div class="role">Customer Success Engineer</div><div class="company">Resend</div>
+      <p class="desc">Email-first mindset and people-focused support for a product I genuinely believe in.</p></div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="job">
+      <div class="years">2024 — 2026</div>
+      <div><div class="role">Principal Support Engineer</div><div class="company">Atlassian</div></div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="job">
+      <div class="years">2019 — 2024</div>
+      <div><div class="role">Tech Lead → Support Engineering</div><div class="company">Loom</div></div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="job">
+      <div class="years">2015 — 2018</div>
+      <div><div class="role">Senior Technical Support Engineer</div><div class="company">Sophos</div></div>
+      <div class="arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<section style="grid-template-columns:1fr;">
+  <div class="sec-label" style="margin-bottom:36px;"><span class="num">03</span>Highlights</div>
+  <div style="max-width:none;">
+    <div class="hobby-grid">
+      <div class="hobby"><div class="emoji">✈️</div><h3>Travel</h3><p>Different cities, different perspectives. The education you can't get in a classroom.</p></div>
+      <div class="hobby"><div class="emoji">☕</div><h3>Coffee</h3><p>From single-origin pour-overs to a perfectly pulled espresso.</p></div>
+      <div class="hobby"><div class="emoji">🛠️</div><h3>Building</h3><p>Side projects and prototypes. Creating something from nothing.</p></div>
+      <div class="hobby"><div class="emoji">🎮</div><h3>Gaming</h3><p>The intersection of design, logic, and pure fun.</p></div>
+      <div class="hobby"><div class="emoji">🎵</div><h3>Music</h3><p>Garage rock to classic rock. Always on, always loud.</p></div>
+      <div class="hobby" style="border-right:none;"><div class="emoji">🏎️</div><h3>Racing</h3><p>Where engineering meets nerve.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">X / Twitter</a><a href="#">GitHub</a><a href="#">Facebook</a>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Michael Vaz</span>
+    <span>Baard Studios · Portugal</span>
+  </div>
+</footer>
+</body>
+</html>
