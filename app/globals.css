@@ -1,21 +1,48 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-blue-electric: #2863A7;
-  --color-red-deep: #813539;
-  --color-gold: #EEC066;
-  --color-navy: #2A4563;
-  --color-coral: #ED5152;
-  --color-cream: #F5EFE0;
+  /* Terminal palette */
+  --color-background: #0a0e14;
+  --color-panel: #0d1117;
+  --color-panel-border: #1f2937;
+  --color-text: #c5d1de;
+  --color-heading: #ecf2f8;
+  --color-muted: #5b6b7f;
+  --color-green: #4ade80;
+  --color-blue: #7aa2f7;
+  --color-amber: #e0af68;
+  --color-rose: #f7768e;
+  --color-cyan: #22d3ee;
 
-  /* legacy aliases used in components */
-  --color-blue-electric: #2863A7;
-  --color-green-vivid: #813539;
-  --color-orange-hot: #EEC066;
-  --color-maroon-dark: #2A4563;
+  /* Legacy aliases — existing components map onto the terminal palette */
+  --color-blue-electric: #0a0e14;
+  --color-red-deep: #f7768e;
+  --color-gold: #e0af68;
+  --color-navy: #0a0e14;
+  --color-coral: #f7768e;
+  --color-cream: #c5d1de;
+  --color-green-vivid: #0d1117;
+  --color-orange-hot: #e0af68;
+  --color-maroon-dark: #0a0e14;
 
-  --font-bebas: "Bebas Neue", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  /* Second-wave legacy aliases (login/register/settings) */
+  --color-border: #1f2937;
+  --color-primary: #4ade80;
+  --color-primary-dark: #22c55e;
+  --color-secondary: #22d3ee;
+  --color-accent: #e0af68;
+  --color-surface: #0d1117;
+  --color-surface-light: #111827;
+  --color-text-primary: #ecf2f8;
+  --color-text-secondary: #c5d1de;
+  --color-text-muted: #5b6b7f;
+
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-jetbrains), ui-monospace, monospace;
+  /* Legacy font vars now resolve to the terminal mono so every page stays consistent */
+  --font-bebas: var(--font-jetbrains), ui-monospace, monospace;
+  --font-inter: var(--font-jetbrains), ui-monospace, monospace;
+  --font-sans: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 * {
@@ -24,94 +51,201 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px;
 }
 
 body {
-  font-family: var(--font-inter);
-  background: var(--color-navy);
-  color: var(--color-cream);
+  font-family: var(--font-mono);
+  background: var(--color-background);
+  color: var(--color-text);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* 3D extruded text — matches the movie poster shadow style */
+::selection {
+  background: #4ade80;
+  color: #0a0e14;
+}
+
+/* ---------- Terminal window chrome ---------- */
+.win {
+  border: 1px solid var(--color-panel-border);
+  border-radius: 10px;
+  background: var(--color-panel);
+  box-shadow: 0 0 80px rgba(74, 222, 128, 0.05);
+}
+
+.win-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-panel-border);
+}
+
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot--r { background: #f87171; }
+.dot--y { background: #fbbf24; }
+.dot--g { background: #4ade80; }
+
+.win-title {
+  margin-left: 12px;
+  font-size: 12px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Prompt & syntax ---------- */
+.prompt { color: var(--color-green); }
+.path-cmd { color: var(--color-blue); }
+.sh-cmd { color: #9ece6a; }
+.cmd-out { color: var(--color-text); }
+.dim { color: var(--color-muted); }
+.hl-green { color: var(--color-green); }
+.hl-amber { color: var(--color-amber); }
+.hl-blue { color: var(--color-blue); }
+.hl-rose { color: var(--color-rose); }
+
+.cursor {
+  display: inline-block;
+  width: 9px;
+  height: 1.05em;
+  background: var(--color-green);
+  vertical-align: text-bottom;
+  margin-left: 6px;
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ---------- Legacy utility compatibility ---------- */
+.gradient-text {
+  background: linear-gradient(120deg, #4ade80 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: rgba(13, 17, 23, 0.82);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid var(--color-panel-border);
+}
+
+.glass-strong {
+  background: rgba(13, 17, 23, 0.92);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--color-panel-border);
+}
+
+.card-hover {
+  transition: all 0.25s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(74, 222, 128, 0.45);
+  box-shadow: 0 12px 32px rgba(74, 222, 128, 0.08);
+}
+
+.btn-primary {
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(74, 222, 128, 0.25);
+}
+
 .text-3d {
-  text-shadow:
-    3px 3px 0 var(--color-navy),
-    6px 6px 0 var(--color-navy),
-    9px 9px 0 var(--color-navy),
-    12px 12px 0 #1a2d42;
+  text-shadow: none;
 }
 
 .text-3d-sm {
-  text-shadow:
-    2px 2px 0 var(--color-navy),
-    4px 4px 0 var(--color-navy);
+  text-shadow: none;
 }
 
-/* Film grain overlay */
+/* Subtle grid backdrop for hero */
+.grid-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='64' height='64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='g' width='64' height='64' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 64 0 L 0 0 0 64' fill='none' stroke='%231f2937' stroke-width='0.6'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 64px 64px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.5s ease-out; }
+.animate-fade-in { animation: fadeIn 0.6s ease-out; }
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Film grain — barely visible, keeps texture */
 .grain::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
   background-repeat: repeat;
   pointer-events: none;
   z-index: 1;
 }
 
-/* Rating badge */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--color-cream);
-  font-family: var(--font-bebas);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  padding: 2px 6px;
-  color: var(--color-cream);
-  line-height: 1;
-}
-
-/* Section rule */
-.section-rule {
-  border: none;
-  border-top: 3px solid currentColor;
-  opacity: 0.4;
-}
-
-/* Hover glow for social icons */
+/* Social icon hover — keep subtle glow */
 .social-icon {
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 .social-icon:hover {
-  transform: translateY(-3px) scale(1.1);
-  filter: drop-shadow(0 0 8px var(--color-coral));
+  transform: translateY(-3px);
+  filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.6));
 }
 
-/* Blog post rich-text content — shared by the Tiptap editor and the public post page */
+/* ---------- Blog content — restyled for terminal theme ---------- */
 .blog-content,
 .prose-blog-editor {
-  font-family: var(--font-inter);
-  line-height: 1.7;
+  line-height: 1.8;
 }
 .blog-content h2,
 .prose-blog-editor h2 {
-  font-family: var(--font-bebas);
-  text-transform: uppercase;
-  font-size: 1.75rem;
+  text-transform: none;
+  font-size: 1.35rem;
   margin: 1.5em 0 0.5em;
-  color: var(--color-gold);
+  color: var(--color-heading);
+  padding-bottom: 0.4em;
+  border-bottom: 1px dashed var(--color-panel-border);
 }
 .blog-content h3,
 .prose-blog-editor h3 {
-  font-family: var(--font-bebas);
-  text-transform: uppercase;
-  font-size: 1.35rem;
+  text-transform: none;
+  font-size: 1.15rem;
   margin: 1.25em 0 0.5em;
-  color: var(--color-gold);
+  color: var(--color-amber);
 }
 .blog-content p,
 .prose-blog-editor p {
@@ -126,15 +260,15 @@ body {
 }
 .blog-content blockquote,
 .prose-blog-editor blockquote {
-  border-left: 3px solid var(--color-coral);
+  border-left: 3px solid var(--color-green);
   padding-left: 1em;
   margin: 0 0 1em;
-  opacity: 0.85;
-  font-style: italic;
+  color: var(--color-muted);
+  font-style: normal;
 }
 .blog-content a,
 .prose-blog-editor a {
-  color: var(--color-coral);
+  color: var(--color-green);
   text-decoration: underline;
 }
 .blog-content img,
@@ -142,4 +276,51 @@ body {
   max-width: 100%;
   height: auto;
   margin: 1em 0;
+}
+
+/* Hobby tile */
+.hobby-card {
+  border: 1px solid var(--color-panel-border);
+  border-radius: 10px;
+  background: var(--color-panel);
+  padding: 22px;
+  transition: all 0.2s ease;
+}
+
+.hobby-card:hover {
+  border-color: rgba(74, 222, 128, 0.55);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(74, 222, 128, 0.08);
+}
+
+/* Contact link row */
+.contact-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--color-panel-border);
+  border-radius: 8px;
+  background: var(--color-panel);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-family: var(--font-mono);
+}
+
+.contact-link:hover {
+  border-color: rgba(74, 222, 128, 0.55);
+  background: rgba(74, 222, 128, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Inputs — terminal style */
+.input-term {
+  font-family: var(--font-mono);
+  border: 1px solid var(--color-panel-border);
+  border-radius: 8px;
+  background: var(--color-background);
+}
+.input-term:focus {
+  border-color: rgba(74, 222, 128, 0.6);
 }
