@@ -48,145 +48,141 @@ function LoginForm() {
   }
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-4 grain"
-      style={{ backgroundColor: "var(--color-blue-electric)" }}
-    >
-      <div className="w-full max-w-md">
+    <main className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#0a0a0f] via-[#111118] to-[#0a0a0f]" />
+        <div className="absolute top-20 right-20 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         <Link
           href="/"
-          className="block mb-8 text-xs tracking-[0.3em] uppercase"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.5 }}
+          className="inline-flex items-center gap-2 mb-8 text-sm transition-colors hover:text-white"
+          style={{ color: "var(--color-text-secondary)" }}
         >
-          ← Back
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to home
         </Link>
 
-        <h1
-          className="uppercase leading-none mb-2"
-          style={{
-            fontFamily: "var(--font-bebas)",
-            color: "var(--color-gold)",
-            fontSize: "clamp(3rem, 10vw, 5rem)",
-          }}
-        >
-          Sign In
-        </h1>
-        <p
-          className="mb-10 text-sm tracking-[0.3em] uppercase"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.5 }}
-        >
-          Access your account
-        </p>
-
-        <a
-          href="/api/auth/google"
-          className="flex items-center justify-center gap-3 px-6 py-3 text-sm transition-opacity hover:opacity-90"
-          style={{
-            backgroundColor: "var(--color-cream)",
-            color: "var(--color-navy)",
-            fontFamily: "var(--font-inter)",
-          }}
-        >
-          <FcGoogle size={20} />
-          Continue with Google
-        </a>
-
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(245,239,224,0.2)" }} />
-          <span
-            className="text-xs tracking-[0.2em] uppercase"
-            style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.4 }}
-          >
-            Or
-          </span>
-          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(245,239,224,0.2)" }} />
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-xs tracking-[0.2em] uppercase mb-2"
-              style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.7 }}
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-transparent text-sm outline-none"
-              style={{
-                border: "2px solid rgba(245,239,224,0.3)",
-                color: "var(--color-cream)",
-                fontFamily: "var(--font-inter)",
-              }}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-xs tracking-[0.2em] uppercase mb-2"
-              style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.7 }}
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-transparent text-sm outline-none"
-              style={{
-                border: "2px solid rgba(245,239,224,0.3)",
-                color: "var(--color-cream)",
-                fontFamily: "var(--font-inter)",
-              }}
-            />
-          </div>
-
-          {displayError && (
-            <p className="text-sm" style={{ color: "var(--color-coral)" }}>
-              {displayError}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-2 px-6 py-3 uppercase tracking-[0.2em] text-sm transition-opacity disabled:opacity-50"
+        <div className="mb-8">
+          <h1
+            className="text-3xl md:text-4xl font-bold mb-2"
             style={{
-              fontFamily: "var(--font-bebas)",
-              backgroundColor: "var(--color-coral)",
-              color: "var(--color-cream)",
-              fontSize: "1rem",
+              fontFamily: "var(--font-display)",
+              color: "var(--color-text-primary)",
             }}
           >
-            {loading ? "Signing in…" : "Sign In"}
-          </button>
-        </form>
+            Welcome back
+          </h1>
+          <p style={{ color: "var(--color-text-secondary)" }}>
+            Sign in to your account to continue
+          </p>
+        </div>
 
-        <div className="mt-8 flex flex-col gap-3">
-          <Link
-            href="/reset-password"
-            className="text-xs tracking-[0.15em] uppercase"
-            style={{ color: "var(--color-cream)", opacity: 0.5, fontFamily: "var(--font-bebas)" }}
+        <div className="win p-8">
+          <a
+            href="/api/auth/google"
+            className="flex items-center justify-center gap-3 w-full px-6 py-3 bg-white text-gray-900 rounded-xl font-medium transition-all hover:shadow-lg hover:shadow-white/10 mb-6"
           >
-            Forgot password?
-          </Link>
-          <Link
-            href="/register"
-            className="text-xs tracking-[0.15em] uppercase"
-            style={{ color: "var(--color-cream)", opacity: 0.5, fontFamily: "var(--font-bebas)" }}
-          >
-            No account yet? Create one →
-          </Link>
+            <FcGoogle size={20} />
+            Continue with Google
+          </a>
+
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px" style={{ backgroundColor: "var(--color-border)" }} />
+            <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+              or
+            </span>
+            <div className="flex-1 h-px" style={{ backgroundColor: "var(--color-border)" }} />
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium mb-2"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-colors focus:border-indigo-500"
+                style={{
+                  border: "1px solid var(--color-border)",
+                  color: "var(--color-text-primary)",
+                }}
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-2"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-colors focus:border-indigo-500"
+                style={{
+                  border: "1px solid var(--color-border)",
+                  color: "var(--color-text-primary)",
+                }}
+                placeholder="Enter your password"
+              />
+            </div>
+
+            {displayError && (
+              <p className="text-sm text-red-400">
+                {displayError}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-6 py-3 rounded-md text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: "#4ade80",
+                color: "#0a0e14",
+              }}
+            >
+              {loading ? "Signing in…" : "Sign In"}
+            </button>
+          </form>
+
+          <div className="mt-6 flex flex-col gap-2 text-center">
+            <Link
+              href="/reset-password"
+              className="text-sm transition-colors hover:text-white"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              Forgot password?
+            </Link>
+            <div className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
+              Don't have an account?{" "}
+              <Link href="/register" className="hover:text-white transition-colors" style={{ color: "var(--color-primary)" }}>
+                Sign up
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </main>

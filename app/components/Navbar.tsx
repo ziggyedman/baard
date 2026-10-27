@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { X, Menu } from "lucide-react";
+import { X, TerminalSquare } from "lucide-react";
 
 const sections = [
-  { label: "Home", href: "/" },
-  { label: "Bio", href: "/#bio" },
-  { label: "Career", href: "/#career" },
-  { label: "Special Features", href: "/#hobbies" },
-  { label: "Blog", href: "/blog" },
-  { label: "Connect", href: "/#connect" },
+  { label: "Home", href: "/", cmd: "cd ~/" },
+  { label: "Bio", href: "/#bio", cmd: "cat about.txt" },
+  { label: "Career", href: "/#career", cmd: "git log --career" },
+  { label: "Special Features", href: "/#hobbies", cmd: "ls ./off_the_clock/" },
+  { label: "Blog", href: "/blog", cmd: "open ./blog/" },
+  { label: "Connect", href: "/#connect", cmd: "open --connect" },
 ];
 
 export default function Navbar() {
@@ -50,133 +50,136 @@ export default function Navbar() {
     setUserEmail(null);
     setOpen(false);
     router.push("/");
+    setSigningOut(false);
   }
 
   return (
     <>
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4"
-        style={{ backgroundColor: "rgba(42,69,99,0.85)", backdropFilter: "blur(8px)" }}
-      >
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Open menu"
-          aria-expanded={open}
-          style={{ color: "var(--color-cream)" }}
-        >
-          <Menu size={22} />
-        </button>
+      {/* Terminal window chrome as top bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b" style={{ borderColor: "var(--color-panel-border)" }}>
+        <div className="flex items-center justify-between px-4 md:px-6 py-3 max-w-6xl mx-auto">
+          <div className="flex items-center gap-2">
+            <span className="dot dot--r" />
+            <span className="dot dot--y" />
+            <span className="dot dot--g" />
+            <span className="win-title hidden sm:block">michael@baard.cc — zsh</span>
+          </div>
 
-        <Link
-          href="/"
-          className="uppercase tracking-[0.1em]"
-          style={{ fontFamily: "var(--font-bebas)", color: "var(--color-gold)", fontSize: "1.4rem" }}
-        >
-          MV
-        </Link>
+          <Link
+            href="/"
+            className="hidden md:block text-sm font-bold"
+            style={{ color: "var(--color-heading)" }}
+          >
+            ~/baard.cc
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={open}
+              className="flex items-center gap-2 text-xs px-3 py-2 rounded-md border transition-colors hover:border-green-400/60"
+              style={{ borderColor: "var(--color-panel-border)", color: "var(--color-muted)" }}
+            >
+              <TerminalSquare size={15} />
+              <span className="hidden sm:inline">menu</span>
+            </button>
+          </div>
+        </div>
       </nav>
 
+      {/* Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 z-40 bg-black/70 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         onClick={() => setOpen(false)}
       />
 
+      {/* Drawer — secondary terminal panel */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col grain w-[min(80vw,360px)] max-w-full transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
-        style={{ backgroundColor: "rgba(10, 18, 38, 0.92)", backdropFilter: "blur(16px)", borderRight: "1px solid rgba(255,255,255,0.08)" }}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-[min(85vw,420px)] max-w-full transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        style={{ backgroundColor: "var(--color-panel)", borderRight: "1px solid var(--color-panel-border)" }}
       >
-        <div className="flex items-center justify-between px-6 py-4">
-          <Link
-            href="/"
-            onClick={() => setOpen(false)}
-            className="uppercase tracking-[0.1em]"
-            style={{ fontFamily: "var(--font-bebas)", color: "var(--color-gold)", fontSize: "1.4rem" }}
-          >
-            MV
-          </Link>
+        <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "var(--color-panel-border)" }}>
+          <div className="flex items-center gap-2">
+            <span className="dot dot--r" />
+            <span className="dot dot--y" />
+            <span className="dot dot--g" />
+            <span className="win-title">michael@baard.cc — navigation</span>
+          </div>
           <button
             onClick={() => setOpen(false)}
             aria-label="Close menu"
-            style={{ color: "var(--color-cream)" }}
+            className="text-xs px-2 py-1 rounded border transition-colors hover:border-green-400/60"
+            style={{ borderColor: "var(--color-panel-border)", color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}
           >
-            <X size={22} />
+            <X size={15} />
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center px-8 pb-16 gap-1">
-          {sections.map(({ label, href }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="py-3 uppercase leading-none border-b transition-opacity hover:opacity-70"
-              style={{
-                fontFamily: "var(--font-bebas)",
-                color: "var(--color-cream)",
-                fontSize: "clamp(2rem, 8vw, 3.5rem)",
-                borderColor: "rgba(245,239,224,0.1)",
-              }}
-            >
-              {label}
-            </Link>
-          ))}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="text-xs mb-4" style={{ color: "var(--color-muted)" }}>
+            <span className="prompt">➜</span> <span className="path-cmd">~/baard.cc</span> <span className="sh-cmd">ls -la ./</span>
+          </div>
 
-          <div className="mt-8 pt-8" style={{ borderTop: "2px solid rgba(245,239,224,0.15)" }}>
+          <div className="flex flex-col">
+            {sections.map(({ label, href, cmd }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="group flex items-baseline justify-between py-3 border-b transition-colors"
+                style={{ borderColor: "var(--color-panel-border)" }}
+              >
+                <span className="group-hover:text-green-400 transition-colors text-base" style={{ color: "var(--color-heading)" }}>
+                  .{cmd.startsWith("ls") || cmd.startsWith("cd") ? "/" : ""}
+                  {label.toLowerCase().replace(" special", "").replace(" ", "_")}
+                </span>
+                <span className="text-xs dim mono-alias">{cmd}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-8 pt-6 border-t" style={{ borderColor: "var(--color-panel-border)" }}>
             {userEmail ? (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2 text-sm">
+                <div className="text-xs mb-2 dim">
+                  <span className="prompt">➜</span> <span className="path-cmd">~/baard.cc</span> <span className="sh-cmd">whoami</span>
+                </div>
+                <div className="hl-amber mb-3">session: {userEmail}</div>
                 {isAdmin && (
                   <Link
                     href="/admin/posts"
                     onClick={() => setOpen(false)}
-                    className="uppercase leading-none transition-opacity hover:opacity-70"
-                    style={{
-                      fontFamily: "var(--font-bebas)",
-                      color: "var(--color-gold)",
-                      fontSize: "clamp(1.5rem, 5vw, 2rem)",
-                    }}
+                    className="hl-green hover:underline transition-colors"
                   >
-                    Admin
+                    sudo open /admin →
                   </Link>
                 )}
-                <Link
-                  href="/settings"
-                  onClick={() => setOpen(false)}
-                  className="uppercase leading-none transition-opacity hover:opacity-70"
-                  style={{
-                    fontFamily: "var(--font-bebas)",
-                    color: "var(--color-gold)",
-                    fontSize: "clamp(1.5rem, 5vw, 2rem)",
-                  }}
-                >
-                  Settings
+                <Link href="/settings" onClick={() => setOpen(false)} className="hover:text-green-400 transition-colors" style={{ color: "var(--color-heading)" }}>
+                  open /settings →
                 </Link>
                 <button
                   onClick={signOut}
                   disabled={signingOut}
-                  className="self-start uppercase leading-none transition-opacity hover:opacity-70 disabled:opacity-40"
-                  style={{
-                    fontFamily: "var(--font-bebas)",
-                    color: "var(--color-cream)",
-                    fontSize: "clamp(1.5rem, 5vw, 2rem)",
-                    opacity: 0.6,
-                  }}
+                  className="self-start dim hover:text-rose-400 transition-colors disabled:opacity-40"
+                  style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}
                 >
-                  {signingOut ? "Signing out…" : "Sign Out"}
+                  {signingOut ? "[ signing out… ]" : "exit --session"}
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="uppercase leading-none transition-opacity hover:opacity-70"
-                style={{
-                  fontFamily: "var(--font-bebas)",
-                  color: "var(--color-gold)",
-                  fontSize: "clamp(1.5rem, 5vw, 2rem)",
-                }}
-              >
-                Sign In →
-              </Link>
+              <div>
+                <div className="text-xs mb-2 dim">
+                  <span className="prompt">➜</span> <span className="path-cmd">~/baard.cc</span> <span className="sh-cmd">auth --init</span>
+                </div>
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex items-center gap-2 text-sm text-green-400 hover:underline"
+                >
+                  authenticate →
+                </Link>
+              </div>
             )}
           </div>
         </div>

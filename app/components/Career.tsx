@@ -2,9 +2,10 @@ const credits = [
   {
     role: "Customer Success Engineer",
     company: "Resend",
-    period: "2026 — Present",
+    period: "2026 — Now",
+    current: true,
     description:
-      "Joined Resend to bring an email first mindset and people focused support to a product I genuinely believe in. I help teams ship reliable messaging workflows while keeping the experience simple and fast.",
+      "Email-first mindset and people-focused support for a product I genuinely believe in. Helping teams ship reliable messaging workflows.",
     link: "https://resend.com/blog/welcoming-michael-vaz/",
   },
   {
@@ -12,36 +13,35 @@ const credits = [
     company: "Atlassian",
     period: "2024 — 2026",
     description:
-      "Handling the hardest problems at one of the world's leading software companies. Deep technical expertise across the Atlassian product suite, supporting enterprise customers at scale.",
-    link: "https://www.linkedin.com/in/michaelvaz/",
+      "Handling the hardest problems at one of the world's leading software companies. Enterprise customers at scale.",
   },
   {
     role: "Tech Lead → Support Engineering",
-    company: "Loom",
+    company: "Loom (acq. by Atlassian)",
     period: "2019 — 2024",
     description:
-      "Five years across four roles — from Founding Engineer to Tech Lead. Built the support function from the ground up, mentored teams, collaborated with Product & Engineering, and owned the technical escalation path. Loom was later acquired by Atlassian.",
+      "Four roles in five years. Built the support function from the ground up and owned the technical escalation path.",
   },
   {
     role: "Senior Technical Support Engineer",
     company: "Sophos",
     period: "2015 — 2018",
     description:
-      "Escalations engineer for Endpoint Security Group in Vancouver. Resolved complex cases across Sophos Central, InterceptX, and Exchange security products. Helped launch and mentor the LATAM support team in Buenos Aires.",
+      "Escalations for Endpoint Security in Vancouver. Launched and mentored the LATAM support team in Buenos Aires.",
   },
   {
     role: "IT Network & Systems Administrator",
     company: "RIS2048 / Gres Panaria Portugal",
     period: "2010 — 2015",
     description:
-      "Enterprise IT infrastructure across manufacturing and ceramics industries in Portugal. Server provisioning, security monitoring, backup operations, and HP BladeSystem solutions as a Hewlett Packard CSN Engineer.",
+      "Enterprise IT infrastructure across manufacturing. HP BladeSystem as an HP CSN Engineer.",
   },
   {
     role: "IT Network & Systems Administrator",
     company: "Serviços Municipalizados de Aveiro",
     period: "2002 — 2010",
     description:
-      "Nearly eight years managing citywide IT infrastructure — network administration, system audits, messaging systems, security, and helpdesk. Where the foundation was built.",
+      "Nearly eight years managing citywide IT infrastructure. Where the foundation was built.",
   },
 ];
 
@@ -49,66 +49,62 @@ export default function Career() {
   return (
     <section
       id="career"
-      className="relative grain overflow-hidden px-6 py-20 md:px-16 md:py-32"
-      style={{ backgroundColor: "var(--color-blue-electric)" }}
+      className="relative overflow-hidden px-6 py-20 md:px-16 md:py-32 border-t"
+      style={{ borderColor: "var(--color-panel-border)" }}
     >
-      <div className="max-w-4xl mx-auto">
-        {/* Heading */}
-        <h2
-          className="text-3d-sm uppercase leading-none mb-10 text-left"
-          style={{
-            fontFamily: "var(--font-bebas)",
-            color: "var(--color-orange-hot)",
-            fontSize: "clamp(3rem, 9vw, 7rem)",
-          }}
-        >
-          Experience
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse 40% 40% at 90% 30%, rgba(122,162,247,0.05), transparent)",
+        }}
+      />
+
+      <div className="max-w-5xl mx-auto relative z-10">
+        <div className="text-sm mb-8">
+          <span className="prompt">➜</span> <span className="path-cmd">~/baard.cc</span>{" "}
+          <span className="sh-cmd">git log --oneline --career</span>
+        </div>
+
+        <h2 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--color-heading)" }}>
+          Commit history — <span className="hl-amber">24 years</span>
         </h2>
+        <p className="text-sm dim mb-10">6 commits · latest merge to main</p>
 
-        <hr className="section-rule mb-12" style={{ borderColor: "var(--color-cream)" }} />
-
-        <div className="space-y-0">
+        <div className="space-y-4">
           {credits.map((item, i) => (
-            <div key={i}>
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-2 md:gap-8 py-8">
-                <div>
-                  <h3
-                    className="uppercase leading-none mb-1"
-                    style={{
-                      fontFamily: "var(--font-bebas)",
-                      color: "var(--color-orange-hot)",
-                      fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
-                    }}
-                  >
+            <div
+              key={i}
+              className="win card-hover group px-5 md:px-7 py-5"
+            >
+              <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1">
+                <div className="text-sm md:text-[15px]">
+                  <span className={item.current ? "hl-green" : "dim"}>
+                    {item.current ? "+" : "·"}
+                  </span>{" "}
+                  <span className="text-xs md:text-sm" style={{ color: item.current ? "var(--color-green)" : "var(--color-muted)" }}>
+                    {item.period}
+                  </span>
+                  <span className="dim"> │ </span>
+                  <span className="font-bold" style={{ color: "var(--color-heading)" }}>
                     {item.role}
-                  </h3>
-                  <p
-                    className="text-base tracking-widest uppercase mb-3"
-                    style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.7 }}
+                  </span>
+                  <span className="dim"> — </span>
+                  <span className="hl-amber">{item.company}</span>
+                </div>
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs hl-green hover:underline whitespace-nowrap"
                   >
-                    {item.company}
-                  </p>
-                  <p className="text-sm md:text-base leading-relaxed" style={{ color: "var(--color-cream)", opacity: 0.8 }}>
-                    {item.description}
-                  </p>
-                  {item.link ? (
-                    <p className="mt-4 text-sm uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-bebas)", color: "var(--color-gold)", opacity: 0.9 }}>
-                      <a href={item.link} target="_blank" rel="noreferrer" className="underline transition-opacity hover:opacity-80">
-                        View current work experience on LinkedIn
-                      </a>
-                    </p>
-                  ) : null}
-                </div>
-                <div
-                  className="text-sm tracking-widest uppercase whitespace-nowrap md:text-right md:pt-1"
-                  style={{ fontFamily: "var(--font-bebas)", color: "var(--color-cream)", opacity: 0.45, fontSize: "0.85rem" }}
-                >
-                  {item.period}
-                </div>
+                    view commit ↗
+                  </a>
+                )}
               </div>
-              {i < credits.length - 1 && (
-                <hr className="section-rule" style={{ borderColor: "var(--color-cream)" }} />
-              )}
+              <div className="text-sm mt-2 md:pl-9" style={{ color: "var(--color-muted)" }}>
+                {item.description}
+              </div>
             </div>
           ))}
         </div>

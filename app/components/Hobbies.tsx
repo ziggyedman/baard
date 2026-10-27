@@ -1,86 +1,46 @@
 const hobbies = [
-  {
-    emoji: "✈️",
-    title: "Travel",
-    description:
-      "Different cities, different cultures, different perspectives. The best education you can't get in a classroom.",
-  },
-  {
-    emoji: "☕",
-    title: "Coffee",
-    description:
-      "A serious pursuit. From single origin pour overs to a perfectly pulled espresso — the ritual matters as much as the cup.",
-  },
-  {
-    emoji: "🛠️",
-    title: "Building",
-    description:
-      "Side projects, prototypes, and experiments. The joy of creating something from nothing never gets old.",
-  },
-  {
-    emoji: "🎮",
-    title: "Gaming",
-    description:
-      "Strategy, story, and the occasional late night session. Games are the intersection of design, logic, and pure fun.",
-  },
-  {
-    emoji: "🎵",
-    title: "Music",
-    description:
-      "From garage rock to classic rock — the right track makes everything sharper. Always on, always loud.",
-  },
-  {
-    emoji: "🏎️",
-    title: "Racing",
-    description:
-      "Engines, lap times, and the perfect line through a corner. Motorsport is where engineering meets nerve.",
-  },
+  { title: "travel", emoji: "✈️", description: "Best education you can't get in a classroom" },
+  { title: "coffee", emoji: "☕", description: "Ritual matters as much as the cup" },
+  { title: "building", emoji: "🛠️", description: "Something from nothing, always" },
+  { title: "gaming", emoji: "🎮", description: "Design × logic × pure fun" },
+  { title: "music", emoji: "🎵", description: "Always on. Always loud." },
+  { title: "racing", emoji: "🏎️", description: "Where engineering meets nerve" },
 ];
 
 export default function Hobbies() {
   return (
     <section
       id="hobbies"
-      className="relative grain overflow-hidden px-6 py-20 md:px-16 md:py-32"
-      style={{ backgroundColor: "var(--color-green-vivid)" }}
+      className="relative overflow-hidden px-6 py-20 md:px-16 md:py-32 border-t"
+      style={{ borderColor: "var(--color-panel-border)" }}
     >
-      <div className="max-w-4xl mx-auto">
-        {/* Heading */}
-        <h2
-          className="text-3d-sm uppercase leading-none mb-10 text-left"
-          style={{
-            fontFamily: "var(--font-bebas)",
-            color: "var(--color-orange-hot)",
-            fontSize: "clamp(3rem, 9vw, 7rem)",
-          }}
-        >
-          Highlights
-        </h2>
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse 40% 40% at 80% 60%, rgba(240,193,102,0.04), transparent)",
+        }}
+      />
 
-        <hr className="section-rule mb-12" style={{ borderColor: "var(--color-cream)" }} />
+      <div className="max-w-5xl mx-auto relative z-10">
+        <div className="text-sm mb-2">
+          <span className="prompt">➜</span> <span className="path-cmd">~/baard.cc</span>{" "}
+          <span className="sh-cmd">ls ./off_the_clock/</span>
+        </div>
+        <p className="text-sm dim mb-10">6 items · browsable</p>
 
-        {/* Hobby grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ border: "3px solid var(--color-navy)", backgroundColor: "var(--color-navy)" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {hobbies.map((hobby, i) => (
             <div
               key={i}
-              className="p-8 flex flex-col gap-3"
-              style={{ backgroundColor: "var(--color-green-vivid)" }}
+              className="hobby-card"
             >
-              <span className="text-4xl" role="img" aria-label={hobby.title}>
-                {hobby.emoji}
-              </span>
-              <h3
-                className="uppercase leading-none"
-                style={{
-                  fontFamily: "var(--font-bebas)",
-                  color: "var(--color-orange-hot)",
-                  fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                }}
-              >
-                {hobby.title}
-              </h3>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--color-cream)", opacity: 0.8 }}>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-2xl">{hobby.emoji}</span>
+                <span className="text-base font-bold hl-green" style={{ fontFamily: "var(--font-mono)" }}>
+                  {hobby.title}/
+                </span>
+              </div>
+              <p className="text-sm" style={{ color: "var(--color-muted)", lineHeight: 1.6 }}>
                 {hobby.description}
               </p>
             </div>
